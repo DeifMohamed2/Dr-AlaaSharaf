@@ -8,6 +8,10 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    PasswordNotHashed: {
+        type: String,
+        required: true
+    },
 
     Password: {
         type: String,
@@ -35,7 +39,7 @@ const userSchema = new Schema({
     phone: {
         type: String,
         required: true,
-        unique: false
+        unique: true
     },
 
     parentPhone: {

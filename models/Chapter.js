@@ -28,6 +28,9 @@ const Chapterschema = new Schema({
     chapterSummaries :{
         type:Array
     },
+    ARorEN:{
+        type:String
+    },
     chapterSolvings:{
         type:Array
     },

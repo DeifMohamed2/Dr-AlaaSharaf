@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="icon" href="images/logo.png" type="image/x-icon">
+  <link rel="icon" href="images/wasf.png" type="image/x-icon">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="/assest/bootstrap.min.css">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
 
-  <link rel="stylesheet" href="./css/main.css">
-  <link rel="stylesheet" href="./css/contacts.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/Register.css">
 </head>
 
 <body>
@@ -63,15 +63,14 @@
           data-bs-target="#exampleModal">
           Launch demo modal
         </button>
-
         <aside class="contact__aside">
-
+        
           <div class="row">
             <div class="col-lg-12">
               <div class="right">
                 <div class="aside__image">
-                  <i class="fa-solid fa-handshake-angle" style="font-size: 5rem;"> </i>
-                </div>
+                  <i class="fa-solid fa-handshake-angle" style="font-size: 5rem;"> </i>             
+                 </div>
                 <h2>تواصل معنا في حال واجهتك مشكله</h2>
                 <p>
                   فريق الدعم الفني متواجد من الساعه العاشره صباحاً حتي العاشره مساءً
@@ -89,20 +88,18 @@
                     <i class="uil uil-envelope"></i>
                     <h5>info@AlaaSharaf.com</h5>
                   </li>
-
+  
                 </ul>
                 <ul class="contact__socials">
-                  <li> <a href="https://www.facebook.com/profile.php?id=100090767258666&mibextid=LQQJ4d"
-                      target="_blank"><i class="uil uil-facebook-f"></i></a>
+                  <li> <a href="https://www.facebook.com/profile.php?id=100090767258666&mibextid=LQQJ4d" target="_blank"><i class="uil uil-facebook-f"></i></a>
                   </li>
                   <li> <a href="https://wa.me/+201128996780" target="_blank"><i class="uil uil-whatsapp"></i></a> </li>
                   <li> <a href="https://wa.me/+201288246998" target="_blank"><i class="uil uil-whatsapp"></i></a> </li>
-
+  
                 </ul>
               </div>
             </div>
           </div>
-
         </aside>
 
 
@@ -142,7 +139,7 @@
                 </div>
                 <div class="col-12 text-center">
                   <select  name="gov"  value="<%= formData.gov || '' %>" required>
-                    <option  selected value="القاهرة">اختر المحافظه</option>
+                    <option  value="">اختر المحافظه</option>
                     <option value="القاهرة">القاهرة</option>
                     <option value="الغربية">الغربية</option>
                     <option value="الجيزة">الجيزة </option>
@@ -185,7 +182,7 @@
 
                 <div class="col-12 text-center">
                   <select name="gender"  value="<%= formData.gender || '' %>" required>
-                    <option> اختر الجنس </option>
+                    <option value=""> اختر الجنس </option>
                     <option value="male">ذكر</option>
                     <option value="female">انثي</option>
                   </select>
@@ -198,7 +195,7 @@
                 </div>
                 <div class="col-12 text-center">
                   <select name="Grade" class="regSel" value="<%= formData.Grade || '' %>" required>
-                    <option selected value="Grade1"> اختر الصف الدراسي </option>
+                    <option  value=""> اختر الصف الدراسي </option>
                     <option value="Grade1">الصف الاول الثانوي</option>
                     <option value="Grade2">الصف الثاني الثانوي</option>
                     <option value="Grade3"> الصف الثالث الثانوي </option>
@@ -209,18 +206,18 @@
                 </div>
                 <div class="col-12 text-center">
                   <select name="place" id="place" value="<%= formData.place || '' %>" required>
-                    <option value="center"> سنتر </option>
+                    <option selected value="center"> سنتر </option>
                     <option value="online"> اونلاين </option>
                     <option value="hosting"> استضافه فقط </option>
 
                   </select>
                 </div>
-                <div class="col-12 text-center">
+                <div class="col-12 text-center d-none">
                   <h4 class="text-warning  mt-2">  اختار انت عربي ولا لغات </h4>
                 </div>
-                <div class="col-12 text-center">
+                <div class="col-12 text-center d-none">
                   <select name="ARorEN" id="place" value="<%= formData.ARorEN || '' %>" required>
-                    <option value="AR"> انا عربي </option>
+                    <option selected value="AR"> انا عربي </option>
                     <option value="EN"> انا لغات </option>
               
                   </select>

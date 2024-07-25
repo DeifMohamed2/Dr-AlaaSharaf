@@ -80,7 +80,7 @@
                                       <% if (lecture.paymentStatus === "Pay") { %> 
                                           
                                         <% if (!lecture.isPaid) { %>
-                                          <form action="/student/buyVideo/<%= lecture._id %>" method="post">
+                                          <form action="/student/buyVideo/<%= lecture._id %>" method="post" id="l<%= lecture._id %>" onsubmit="handleFormSubmission(event)">
       
                                             <input type="text"  name="code" placeholder="ادخل الكود" required>
                                             <button type="submit" class="btn btn-primary" >استخدام الكود</button> 
@@ -161,6 +161,39 @@
     <script src="/assest/bootstrap.min.js"></script>
     <script src="/assest/bootstrap.bundle.min.js"></script>
     
+    <script>
+      function handleFormSubmission(event) {
+          event.preventDefault(); // Prevent default form submission
+  
+          const form = event.target; // Get the form element
+  
+          // Perform AJAX form submission
+          fetch(form.action, {
+              method: form.method,
+              body: new FormData(form)
+          })
+          .then(response => {
+              if (response.status === 204) {
+                  // If response status is 201 (Created), refresh the page
+                  window.location.reload();
+              } else {
+                
+                let alertElement = document.getElementById('alert');
+          alertElement.style.display = 'block';
+          alertElement.classList.add('show');
+    
+          // Hide the alert after 20 seconds
+          setTimeout(function() {
+            alertElement.classList.remove('show');
+            alertElement.classList.add('hide');
+          }, 40000);
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+      }
+  </script>
     <script>
       // Get the current URL path
       const currentPath = window.location.pathname;

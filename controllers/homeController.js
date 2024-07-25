@@ -5,9 +5,6 @@ const jwt = require('jsonwebtoken')
 
 const  jwtSecret = process.env.JWTSECRET
 
-const { v4: uuidv4 } = require('uuid')
-
-
 
 
 // check Login 
@@ -31,7 +28,7 @@ const public_login_post = async (req, res) => {
 
     const user = await User.findOne({
       $or: [
-        { Email: emailOrPhone },
+       
         { phone: emailOrPhone } 
       ]
     });
@@ -143,11 +140,35 @@ const public_Register_post = async (req, res) => {
 
   // auth Of jwt
 
+  let quizesInfo = []
+  let videosInfo = []
+
+  if (Grade ==="Grade1") {
+    await User.findOne({Grade:Grade,Code:917573}).then((result)=>{
+      quizesInfo = result.quizesInfo
+      videosInfo = result.videosInfo
+      
+    })
+  }else if(Grade ==="Grade2"){
+    await User.findOne({Grade:Grade,Code:616208}).then((result)=>{
+      quizesInfo = result.quizesInfo
+      videosInfo = result.videosInfo
+    })
+  }else if(Grade ==="Grade3"){
+    await User.findOne({Grade:Grade,Code:783172}).then((result)=>{
+      quizesInfo = result.quizesInfo
+      videosInfo = result.videosInfo
+    })
+  }
+
+
+
   const hashedPassword = await bcrypt.hash(Password,10)
 
   try {
     const user =  new User({
       Username:Username,
+      PasswordNotHashed:Password,
       Password:hashedPassword,
       gov:gov,
       Markez:Markez,
@@ -159,18 +180,18 @@ const public_Register_post = async (req, res) => {
       place:place,
       Code:Code,
       subscribe :false,
-      quizesInfo :[],
-      videosInfo : [],
+      quizesInfo :quizesInfo,
+      videosInfo : videosInfo,
       totalScore:0,
       examsEnterd:0,
       totalQuestions:0,
       totalSubscribed:0,
       isTeacher:false,
-      ARorEN : ARorEN,
+      ARorEN : "AR",
       chaptersPaid:[],
       videosPaid: [],
       examsPaid: [],
-      // Add other fields as needed
+  
     });
     user
     .save()

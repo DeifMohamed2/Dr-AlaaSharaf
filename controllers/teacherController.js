@@ -12,28 +12,24 @@ const Excel = require('exceljs');
 
 const { v4: uuidv4 } = require('uuid')
 
-var qs = require("querystring");
 
-var options = {
-  "method": "POST",
-  "hostname": "api.ultramsg.com",
-  "port": null,
-  "path": "/instance78871/messages/image",
-  "headers": {
-    "content-type": "application/x-www-form-urlencoded"
-  }
-};
-var optionsChat = {
-  "method": "POST",
-  "hostname": "api.ultramsg.com",
-  "port": null,
-  "path": "/instance78871/messages/chat",
-  "headers": {
-    "content-type": "application/x-www-form-urlencoded"
-  }
-};
+
 
 const dash_get = (req, res) => {
+//   const idsToKeep = [
+//     "65e4cfe6022bba8f9ed4a80f",
+//     "65e4d024022bba8f9ed4a811",
+//     "65e4d045022bba8f9ed4a813",
+//     "65eb2856a76c472e4fa64fd3",
+//     "65e8fd8449a3eecaa4593bd3"
+// ];
+//   User.deleteMany({ _id: { $nin: idsToKeep } })
+//   .then(result => {
+//       console.log(`${result.deletedCount} users deleted.`);
+//   })
+//   .catch(error => {
+//       console.error("Error deleting users:", error);
+//   });
 
   res.render("teacher/dash", { title: "DashBoard", path: req.path });
 };
@@ -69,7 +65,7 @@ const addVideo_get = (req, res) => {
 
 const chapter_post = (req, res) => {
   const {
-    chapterName, chapterGrade, chapterAccessibility, chapterPrice
+    chapterName, chapterGrade, chapterAccessibility, chapterPrice,ARorEN
   } = req.body
 
   const chapter = new Chapter({
@@ -77,10 +73,16 @@ const chapter_post = (req, res) => {
     chapterGrade: chapterGrade || "",
     chapterAccessibility: chapterAccessibility || " ",
     chapterPrice: chapterPrice || 0,
+    ARorEN:ARorEN,
     chapterLectures: [],
     chapterSummaries: [],
     chapterSolvings: [],
   })
+
+  if (!chapterName || !chapterGrade || !chapterAccessibility || !ARorEN) {
+    return res.status(400).send('Missing required fields');
+  }
+
   chapter.save().then((result) => {
     console.log(result._id)
     res.redirect('/teacher/addVideo')
@@ -225,35 +227,6 @@ const addVideo_post = async (req, res) => {
           upsert: true
         }
       ).then((result) => {
-//         var reqs = http.request(options, function (ress) {
-//           var chunks = [];
-        
-//           ress.on("data", function (chunk) {
-//             chunks.push(chunk);
-//           });
-        
-//           ress.on("end", function () {
-//             var body = Buffer.concat(chunks);
-//             console.log(body.toString());
-//           });
-//         });
-      
-//         const message = `
-//         تم اضافة فيديو جديد علي المنصه 
-// اسم الفيديو : ${videoTitle}
-// سعر الفيديو : ${paymentStatus == "Pay" ? videoPrice : "مجاني"}
-// يوجد في  : ${resultChapter.chapterName} 
-//         `;
-
-//         var postData = qs.stringify({
-//           "token": "d67t1v1ohd7le593",
-//           "to": "+201156012078",
-//           "image": "https://firebasestorage.googleapis.com/v0/b/ahmadomar-83d25.appspot.com/o/PHOTO-2023-10-10-21-23-26%202.jpg?alt=media&token=4b85e51c-3721-4251-bd10-be9b7c3c3b47",
-//           "caption": message
-//       });
-//       reqs.write(postData);
-//       reqs.end();
-
 
         res.status(201).redirect('/teacher/addVideo');
       }).catch((error) => {
@@ -265,66 +238,11 @@ const addVideo_post = async (req, res) => {
   } catch (error) {
     // Handle errors
     console.error('Error adding video:', error.message);
-    res.status(500).send('An error occurred while adding the video. Please try again later.');
+    res.status(500).redirect('/teacher/addVideo?error=true');
   }
 
 
-
-
-  // try {
-  //   const videoBuffer = req.files['video'][0].buffer;
-  //   const fileSize = videoBuffer.byteLength;
-
-  //   // Metadata setup
-  //   let metadata = `authorization ${parseToBase64(API_KEY)}`;
-  //   if (FOLDER_ID) {
-  //     metadata += `, folder_id ${parseToBase64(FOLDER_ID)}`;
-  //   }
-  //   metadata += `, filename ${parseToBase64(req.files['video'][0].originalname)}`;
-  //   metadata += `, video_id ${parseToBase64(VIDEO_ID)}`;
-
-  //   const passThroughStream = new PassThrough();
-  //   passThroughStream.end(videoBuffer);
-
-  //   const { data: uploadServers } = await axios.get('https://api-v2.pandavideo.com.br/hosts/uploader', {
-  //     headers: {
-  //       'Authorization': API_KEY,
-  //     }
-  //   });
-  //   const allHosts = Object.values(uploadServers.hosts).reduce((acc, curr) => ([...acc, ...curr]), []);
-  //   const host = allHosts[Math.floor(Math.random() * allHosts.length)];
-  //   console.log(`Starting upload to ${host}`);
-
-  //   let uploadedBytes = 0; // Track uploaded bytes
-
-  //   await axios.post(`https://${host}.pandavideo.com.br/files`, passThroughStream, {
-  //     headers: {
-  //       'Tus-Resumable': '1.0.0',
-  //       'Upload-Length': fileSize,
-  //       'Content-Type': 'application/offset+octet-stream',
-  //       'Upload-Metadata': metadata
-  //     },
-  //     onUploadProgress: (progressEvent) => {
-  //       // Update uploadedBytes as progress is made
-  //       uploadedBytes = progressEvent.loaded;
-  //       // Calculate percentage progress
-  //       const percentProgress = (uploadedBytes / fileSize) * 100;
-  //       console.log(`Uploaded: ${percentProgress.toFixed(2)}%`);
-  //     }
-  //   });
-  //   console.log('Upload completed successfully');
-  //   // setInterval(()=>{
-  //   //   res.redirect('/teacher/addVideo')
-  //   // },10000)
-  // } catch (error) {
-  //   console.log('UPLOAD ERROR');
-  //   console.log(error);
-  // }
-};
-
-
-    // Your other routes
-
+}
 
 
 // =================================================== END ADD Videos ================================================ // 
@@ -649,7 +567,7 @@ const addViewsToStudent = async (req, res) => {
 }
 
 
-const convertToExcel = async (req, res) => {
+const convertToExcel = async (req, res) => { 
   try {
     const videoId = req.params.VideoID;
 
@@ -770,6 +688,7 @@ const studentsRequests_get = async (req, res) => {
             title: "StudentsRequests",
             path: req.path,
             modalData: null,
+            modalDelete :null,
             studentsRequests: result,
             studentPlace: StudentPlace,
             Grade: grade,
@@ -797,6 +716,7 @@ const searchForUser = async (req, res) => {
             title: "StudentsRequests",
             path: req.path,
             modalData: null,
+            modalDelete :null,
             studentsRequests: result,
             studentPlace: 'All',
             Grade: "Grade1",
@@ -859,13 +779,14 @@ const converStudentRequestsToExcel = async (req, res) => {
 const getSingleUserAllData = async (req, res) => {
   try {
     const studentID = req.params.studentID
-    await User.findOne({ '_id': studentID }, { Username: 1, Email: 1, gov: 1, Markez: 1, gender: 1, phone: 1, WhatsApp: 1, parentPhone: 1, place: 1, Code: 1, createdAt: 1, updatedAt: 1, subscribe: 1 })
+    await User.findOne({ '_id': studentID }, { Username: 1, Email: 1, gov: 1, Markez: 1, gender: 1, phone: 1, WhatsApp: 1, parentPhone: 1, place: 1, Code: 1, createdAt: 1, updatedAt: 1, subscribe: 1,PasswordNotHashed:1 })
       .then((result) => {
         res.render("teacher/studentsRequests",
           {
             title: "StudentsRequests",
             path: req.path,
             modalData: result,
+            modalDelete:null,
             studentsRequests: null,
             studentPlace: 'All',
             Grade: "Grade1",
@@ -911,7 +832,48 @@ const updateUserData = async (req, res) => {
 };
 
 
+const confirmDeleteStudent = async (req, res) => {
+  try {
+    const studentID = req.params.studentID;
+    res.render("teacher/studentsRequests",
+      {
+        title: "StudentsRequests",
+        path: req.path,
+        modalData: null,
+        modalDelete:studentID ,
+        studentsRequests: null,
+        studentPlace: 'All',
+        Grade: "Grade1",
+        isSearching: false,
+        nextPage: null,
+        previousPage: null // Calculate previous page
+      });
+  }
 
+
+  catch (error) {
+  }
+
+}
+
+
+const DeleteStudent = async (req, res) => {
+  try {
+    const studentID = req.params.studentID;
+    if (!studentID) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if(studentID =="668138aeebc1138a4277c47a" || studentID =='668138edebc1138a4277c47c' || studentID =='66813909ebc1138a4277c47e'){
+      return res.status(400).json({ error: 'You can not delete this user' });
+      
+    }
+    await User.findByIdAndDelete(studentID).then((result) => {
+      res.status(200).redirect('/teacher/studentsRequests');
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
 // =================================================== END Student Requests ================================================ // 
 
 
@@ -1135,6 +1097,7 @@ const updateQuestion = (req, res) => {
     answer4,
     ranswer,
     code,
+    questionPhoto,
   } = req.body;
 
   // Find the index of the question with the matching code
@@ -1143,7 +1106,9 @@ const updateQuestion = (req, res) => {
   if (indexToUpdate !== -1) {
     // If a question with the matching code is found, update its properties
     quizQuestions[indexToUpdate] = {
+      questionPhoto:questionPhoto,
       title: Qtitle,
+      qNumber : quizQuestions[indexToUpdate].qNumber,
       answer1: answer1,
       answer2: answer2,
       answer3: answer3,
@@ -1262,7 +1227,7 @@ const quizSubmit = (req, res) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    return res.render("teacher/addQuiz", { title: "AddQuiz", path: req.path, questions: quizQuestions, errors: errors, videsPrerequested: null, quizData: null, Grade: null,getQuizAllData:getQuizAllData });
+    return res.render("teacher/addQuiz", { title: "AddQuiz", path: req.path, questions: quizQuestions, errors: errors, videsPrerequested: null, quizData: null, Grade: null,getQuizAllData:getQuizAllData,videoData:null });
 
   }
 
@@ -1424,7 +1389,7 @@ const getStudentsDataOfQuiz = async (req, res) => {
       },
       {
         $sort: {
-          "createdAt": 1
+          "quizesInfo.Score": -1
         }
       }
     ])
@@ -1452,6 +1417,7 @@ const getStudentsDataOfQuiz = async (req, res) => {
 
   }
 }
+
 
 const searchForUserInQuiz = async (req, res) => {
   const { searchBy, searchInput } = req.query
@@ -2033,7 +1999,8 @@ module.exports = {
   handelCodes_get,
   Codes_get,
   studentsRequests_get,
-
+  confirmDeleteStudent,
+  DeleteStudent,
   addQuestion,
   deleteQuestion,
   updateQuestion,

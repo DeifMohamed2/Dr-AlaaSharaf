@@ -144,7 +144,7 @@
                                                 <td><%= counter %></td>
                                                 <td><%=student.Username %></td>
                                                 <td><%=student.Code %></td>
-                                                <td><%=student['quizesInfo'][0].solvedAt ||"1/10"%></td>
+                                                <td><%=student['quizesInfo'][0].solvedAt ? new Date(student['quizesInfo'][0].solvedAt).toLocaleString() : ""%></td>
                                                 <td><%=student['quizesInfo'][0].questionsCount %> / <%=  student['quizesInfo'][0].Score %> </td>
                                                 <form action="/teacher/changeEnterToQuiz/<%= student['quizesInfo'][0]['_id'] %>?UserId=<%= student._id %>" method="post">
                                                     <div class="text-center">
@@ -182,6 +182,18 @@
 
 
      <script>
+           
+    const sdieMenu = document.querySelector("aside");
+    const menuBtn = document.querySelector("#menu-btn");
+    const closeBtn = document.querySelector("#close-btn");
+  
+    menuBtn.addEventListener("click", () => {
+      sdieMenu.style.display = "block";
+    });
+  
+    closeBtn.addEventListener("click", () => {
+      sdieMenu.style.display = "none";
+    });
         const getQuizzesNames = document.getElementById('getQuizzesNames')
         document.getElementById('Grade').addEventListener('change',()=>{
             getQuizzesNames.submit()

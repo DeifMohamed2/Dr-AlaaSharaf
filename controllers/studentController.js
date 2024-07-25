@@ -19,6 +19,7 @@ const { v4: uuidv4 } = require('uuid')
 
 const dash_get = async (req, res) => {
   try {
+
       const rankedUsers = await User.find({},{Username:1,userPhoto:1}).sort({ totalscore: -1 }).limit(3);
       console.log(rankedUsers[0]);
     res.render("student/dash", { title: "DashBoard", path: req.path, userData: req.userData ,rankedUsers :rankedUsers });
@@ -35,7 +36,7 @@ const dash_get = async (req, res) => {
 
 const chapters_get = async (req, res) => {
   try {
-    const chapters = await Chapter.find({ "chapterGrade": req.userData.Grade }).sort({ createdAt: 1 });
+    const chapters = await Chapter.find({ "chapterGrade": req.userData.Grade ,"ARorEN" :req.userData.ARorEN }).sort({ createdAt: 1 });
     const paidChapters = chapters.map(chapter => {
       const isPaid = req.userData.chaptersPaid.includes(chapter._id);
       return { ...chapter.toObject(), isPaid };
@@ -277,23 +278,40 @@ const buyVideo = async (req, res) => {
   try {
     const videoId = req.params.videoId;
     const code = req.body.code;
-   const CodeData =  await Code.findOneAndUpdate
-    ({ "Code": code , "isUsed": false , "codeType":"Video", "codeFor": videoId   }, 
-    { "isUsed": true, "usedBy": req.userData.Code,  }, { new: true });
+    console.log(videoId, code);
+
+    // Update Code document
+    const CodeData = await Code.findOneAndUpdate(
+      { "Code": code, "isUsed": false, "codeType": "Video", "codeFor": videoId },
+      { "isUsed": true, "usedBy": req.userData.Code },
+      { new: true }
+    );
+
     if (CodeData) {
-      await User.findByIdAndUpdate(req.userData._id, { $push: { videosPaid: videoId } ,$inc: {totalSubscribed: 1}  , $set: { 'videosInfo.$.videoPurchaseStatus': true } });
-      res.send('Video Bought');
+      // Check if the videoId exists in videosInfo array before updating
+      const user = await User.findOne({ _id: req.userData._id, "videosInfo._id": videoId });
+      if (user) {
+        // Update User document
+        await User.findOneAndUpdate(
+          { _id: req.userData._id, "videosInfo._id": videoId },
+          { 
+            $push: { videosPaid: videoId }, 
+            $inc: { totalSubscribed: 1 },
+            $set: { 'videosInfo.$.videoPurchaseStatus': true } 
+          }
+        );
+        res.status(204).send();
+      } else {
+        res.status(301).send()
+      }
+    } else {
+      res.status(301).send();
     }
-    else{
-      res.send('Video not Bought');
-      // res.redirect('/student/videos/lecture/'+videoId+'?error=true');
-    }
-  }
-  catch (error ) {
+  } catch (error) {
     res.send(error.message);
   }
 }
-    
+
 
 // ================== End Lecture  ====================== //
 
@@ -465,17 +483,14 @@ const ranking_get = async (req,res)=>{
       // Find all students and sort them by totalScore
       const allStudents = await User.find({}, { Username: 1, Code: 1, totalScore: 1 })
         .sort({ totalScore: -1 })
-        .exec();
     
-        console.log(allStudents);
+
       // Find the index of the student in the sorted array
       const userRank = allStudents.findIndex(s => s.Code === +searchInput) + 1;
       console.log(userRank);
       const paginatedStudents = await User.find({ Code: searchInput }, { Username: 1, Code: 1, totalScore: 1 })
         .sort({ totalScore: -1 })
-        .skip(perPage * page - perPage)
-        .limit(perPage)
-        .exec();
+    
     
       const count = await User.countDocuments({});
     
@@ -499,9 +514,7 @@ const ranking_get = async (req,res)=>{
     
     else{
     await User.find({},{Username:1,Code:1,totalScore:1}).sort({ totalscore: -1 })  
-    .skip(perPage * page - perPage)
-    .limit(perPage)
-    .exec()
+ 
     .then(async (result) => {
       const count = await Code.countDocuments({});
       const nextPage = parseInt(page) + 1;
@@ -651,6 +664,24 @@ const quizWillStart = async (req, res) => {
   
 
 
+const escapeSpecialCharacters = (text) => {
+  try {
+    // Attempt to parse the JSON string
+    const parsedText = JSON.parse(text);
+    // If parsing succeeds, stringify it back and escape special characters
+    const escapedText = JSON.stringify(parsedText, (key, value) => {
+      if (typeof value === 'string') {
+        return value.replace(/["\\]/g, '\\$&');
+      }
+      return value;
+    });
+    return escapedText;
+  } catch (error) {
+    // If parsing fails, return the original text
+    return text;
+  }
+};
+
 const quiz_start = async (req, res) => {
   try {
     const quizId = req.params.quizId;
@@ -680,14 +711,22 @@ const quiz_start = async (req, res) => {
       console.log(questionNumber);
     }
 
-    // Find the current question
+
+    // Find the current question and escape special characters
     const question = quiz.Questions.find(q => q.qNumber.toString() === questionNumber.toString());
+
+    question.title = escapeSpecialCharacters(question.title);
+    question.answer1 = escapeSpecialCharacters(question.answer1);
+    question.answer2 = escapeSpecialCharacters(question.answer2);
+    question.answer3 = escapeSpecialCharacters(question.answer3);
+    question.answer4 = escapeSpecialCharacters(question.answer4);
 
     res.render("student/quizStart", { title: "Quiz", path: req.path, quiz, userData: req.userData, question, userQuizInfo });
   } catch (error) {
     res.send(error.message);
   }
 }
+
 
 
 
@@ -742,6 +781,51 @@ const quizFinish = async(req,res)=>{
   }
 }
 
+
+
+const review_Answers = async (req,res)=>{
+  try {
+
+    const quizId = req.params.quizId;
+    const quizObjId = new mongoose.Types.ObjectId(quizId);
+    const quiz = await Quiz.findById(quizId);
+    const userQuizInfo = req.userData.quizesInfo.find(q => q._id.toString() === quiz._id.toString());
+    const quizData = req.body;
+
+
+
+    // Redirect if quiz or user info not found
+    if ( quiz.isQuizActive || !quiz.permissionToShow ) {
+      return res.redirect('/student/exams');
+    }
+
+
+    // Parse query parameter for question number
+    let questionNumber = parseInt(req.query.qNumber) || 1;
+    if (questionNumber > quiz.questionsCount) {
+      questionNumber = quiz.questionsCount;
+      console.log(questionNumber);
+    }
+
+
+    // Find the current question and escape special characters
+    const question = quiz.Questions.find(q => q.qNumber.toString() === questionNumber.toString());
+
+    question.title = escapeSpecialCharacters(question.title);
+    question.answer1 = escapeSpecialCharacters(question.answer1);
+    question.answer2 = escapeSpecialCharacters(question.answer2);
+    question.answer3 = escapeSpecialCharacters(question.answer3);
+    question.answer4 = escapeSpecialCharacters(question.answer4);
+
+
+
+    res.render("student/reviewAnswers",{ title: "Quiz", path: req.path, quiz, userData: req.userData, question, userQuizInfo });
+
+    
+  } catch (error) {
+    res.send(error.message);
+  }
+}
 
 
 
@@ -810,6 +894,7 @@ module.exports = {
   quizWillStart,
   quiz_start,
   quizFinish,
+  review_Answers,
 
   settings_get,
   settings_post,
