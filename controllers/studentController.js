@@ -20,8 +20,8 @@ const { v4: uuidv4 } = require('uuid')
 const dash_get = async (req, res) => {
   try {
 
-      const rankedUsers = await User.find({},{Username:1,userPhoto:1}).sort({ totalscore: -1 }).limit(3);
-      console.log(rankedUsers[0]);
+    const rankedUsers = await User.find({Grade:req.userData.Grade},{Username:1,userPhoto:1}).sort({ totalScore: -1 }).limit(3);
+     
     res.render("student/dash", { title: "DashBoard", path: req.path, userData: req.userData ,rankedUsers :rankedUsers });
   } catch (error) {
     res.send(error.message);
@@ -282,7 +282,7 @@ const buyVideo = async (req, res) => {
 
     // Update Code document
     const CodeData = await Code.findOneAndUpdate(
-      { "Code": code, "isUsed": false, "codeType": "Video", "codeFor": videoId },
+      { "Code": code, "isUsed": false },
       { "isUsed": true, "usedBy": req.userData.Code },
       { new: true }
     );
@@ -513,21 +513,30 @@ const ranking_get = async (req,res)=>{
     }
     
     else{
-    await User.find({},{Username:1,Code:1,totalScore:1}).sort({ totalscore: -1 })  
- 
-    .then(async (result) => {
-      const count = await Code.countDocuments({});
-      const nextPage = parseInt(page) + 1;
-      const hasNextPage = nextPage <= Math.ceil(count / perPage);
-      const hasPreviousPage = page > 1;
+      await User.find({ Grade: req.userData.Grade }, { Username: 1, Code: 1, totalScore: 1 })
+        .sort({ totalScore: -1 })
+        .then(async (result) => {
+          const count = await Code.countDocuments({});
+          const nextPage = parseInt(page) + 1;
+          const hasNextPage = nextPage <= Math.ceil(count / perPage);
+          const hasPreviousPage = page > 1;
       
-      res.render("student/ranking", { title: "Ranking", path: req.path, userData: req.userData ,rankedUsers :result , nextPage: hasNextPage ? nextPage : null, previousPage: hasPreviousPage ? page - 1 : null,  userRank: null ,isSearching : false});
-
-    }).catch((err)=>{
-      console.log(err)
-    })
-    return
-  }
+          res.render("student/ranking", {
+            title: "Ranking",
+            path: req.path,
+            userData: req.userData,
+            rankedUsers: result,
+            nextPage: hasNextPage ? nextPage : null,
+            previousPage: hasPreviousPage ? page - 1 : null,
+            userRank: null,
+            isSearching: false
+          });
+      
+          }).catch((err)=>{
+            console.log(err)
+          })
+          return
+        }
   } catch (error) {
     console.log()
   }
@@ -544,7 +553,7 @@ const ranking_get = async (req,res)=>{
 const exams_get = async (req, res) => {
   try {
 
-    const rankedUsers = await User.find({},{Username:1,userPhoto:1}).sort({ totalscore: -1 }).limit(3);
+    const rankedUsers = await User.find({Grade:req.userData.Grade},{Username:1,userPhoto:1}).sort({ totalScore: -1 }).limit(3);
 
     const exams = await Quiz.find({ "Grade": req.userData.Grade  }).sort({ createdAt: 1 });
  
