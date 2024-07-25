@@ -33,7 +33,6 @@
 
   --transition: all 600ms ease;
 }
-
 body {
   font-family: 'Rihgthouse';
   line-height: 1.7;
@@ -43,7 +42,6 @@ background: -webkit-linear-gradient(170deg, #000000 0%, #4a4a4a 100%);
 background: linear-gradient(170deg, #000000 0%, #4a4a4a 100%);
   overflow-x: hidden;
 }
-
 .container {
   width: var(--container-width-lg);
   margin: 0 auto;
@@ -466,7 +464,7 @@ transform: translateY(0);
 }
 
 .category {
-  background: #fec900;
+  background: var(--color-primary);
   
   color: #000;
   padding: 1.5rem;
@@ -944,7 +942,6 @@ footer ul li a:hover {
 
 section.featuers {
   padding: 80px 0 80px;
-  background-color: var(--color-bg);
 }
 
 section.featuers .featuers-title {
