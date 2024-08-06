@@ -187,7 +187,7 @@ const public_Register_post = async (req, res) => {
       totalQuestions:0,
       totalSubscribed:0,
       isTeacher:false,
-      ARorEN : "AR",
+      ARorEN : ARorEN,
       chaptersPaid:[],
       videosPaid: [],
       examsPaid: [],
