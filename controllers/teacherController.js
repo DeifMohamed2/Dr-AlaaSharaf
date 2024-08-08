@@ -648,6 +648,7 @@ const convertToExcel = async (req, res) => {
 
 
 
+
 let query
 const studentsRequests_get = async (req, res) => {
   try {
@@ -718,8 +719,8 @@ const searchForUser = async (req, res) => {
             modalData: null,
             modalDelete :null,
             studentsRequests: result,
-            studentPlace: 'All',
-            Grade: "Grade1",
+            studentPlace: query.place || 'All',
+            Grade: query.Grade,
             isSearching: true,
             nextPage: null,
             previousPage: null // Calculate previous page
@@ -788,8 +789,8 @@ const getSingleUserAllData = async (req, res) => {
             modalData: result,
             modalDelete:null,
             studentsRequests: null,
-            studentPlace: 'All',
-            Grade: "Grade1",
+            studentPlace: query.place || 'All',
+            Grade: query.Grade,
             isSearching: false,
             nextPage: null,
             previousPage: null // Calculate previous page
@@ -823,7 +824,7 @@ const updateUserData = async (req, res) => {
     }
 
     // Redirect to the desired page after successful update
-    res.status(201).redirect('/teacher/studentsRequests');
+    res.status(201).redirect(`/teacher/studentsRequests?Grade=${query.Grade}&studentPlace=All`);
   } catch (error) {
     // Handle errors appropriately
     console.error(error);
@@ -842,8 +843,8 @@ const confirmDeleteStudent = async (req, res) => {
         modalData: null,
         modalDelete:studentID ,
         studentsRequests: null,
-        studentPlace: 'All',
-        Grade: "Grade1",
+        studentPlace: query.place || 'All',
+        Grade: query.Grade,
         isSearching: false,
         nextPage: null,
         previousPage: null // Calculate previous page
@@ -868,7 +869,7 @@ const DeleteStudent = async (req, res) => {
       
     }
     await User.findByIdAndDelete(studentID).then((result) => {
-      res.status(200).redirect('/teacher/studentsRequests');
+      res.status(200).redirect(`/teacher/studentsRequests?Grade=${query.Grade}&studentPlace=All`);
     })
   } catch (error) {
     console.log(error)
