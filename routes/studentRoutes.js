@@ -110,13 +110,28 @@ router.get("/reviewAnswers/:quizId",authenticateUser, studentController.review_A
 
 // ==================  end quiz  ====================== //
 
+// ==================  Wallet  ====================== //
+
+
+router.get("/wallet",authenticateUser, studentController.wallet_get);
+
+router.post("/wallet",authenticateUser, studentController.wallet_post);
+
+
+// ================== END Wallet  ====================== //
+
+
 // ================== Profile  ====================== //
+
+
 
 router.get("/settings",authenticateUser, studentController.settings_get);
 
 router.post("/settings",authenticateUser, studentController.settings_post);
 
 
+
+// ================== END Profile  ====================== //
 
 
 router.get("/logOut", studentController.logOut);

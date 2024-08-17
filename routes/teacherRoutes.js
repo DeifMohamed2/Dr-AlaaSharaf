@@ -87,6 +87,18 @@ router.post("/addVideo" , teacherController.addVideo_post);
 
 
 
+//  ================== Wallet ====================== //
+
+
+router.get('/wallet', authMiddleware, teacherController.admin_wallet_get);
+
+
+
+//  ================== END Wallet ====================== //
+
+
+
+
 // ==================  Student Requests  ================= //
 
 
@@ -105,6 +117,7 @@ router.post("/updateUserData/:studentID", authMiddleware,teacherController.updat
 
 
 // ==================  END Student Requests  ================= //
+
 
 // ==================   myStudent  ================= //
 

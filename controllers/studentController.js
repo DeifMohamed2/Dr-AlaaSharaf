@@ -2,6 +2,7 @@ const Quiz = require("../models/Quiz");
 const User = require("../models/User");
 const Chapter = require("../models/Chapter");
 const Code = require("../models/Code");
+const Transaction = require("../models/Transaction");
 const mongoose = require('mongoose');
 
 const jwt = require('jsonwebtoken')
@@ -863,6 +864,79 @@ const review_Answers = async (req,res)=>{
 // ================== END quiz  ====================== //
 
 
+
+// ================== Wallet  ====================== //
+
+const wallet_get = async (req, res) => { 
+  try {
+    res.render("student/wallet", { title: "Wallet", path: req.path, userData: req.userData });
+    console.log(req.userData  );
+  } catch (error) {
+    res.send(error.message);
+  }
+}
+
+const wallet_post = async (req, res) => {
+  try {
+
+ 
+
+    const transactionId = Math.floor(Math.random() * (500000 - 100000 + 1)) + 100000;
+    const { amount, provePhoto } = req.body;
+    const transaction = Transaction.create({
+      transactionId: transactionId,
+      transactionAmount: +amount,
+      transactionType: 'Deposit',
+      transactionStatus: 'Pending',
+      transactionGrade: req.userData.Grade,
+      transactionUser: req.userData._id,
+      transactionPhoto: provePhoto,
+      transactionDate: Date.now(),
+    })
+      .then(async () => {
+      const user = await User.findByIdAndUpdate(
+        req.userData._id,
+        {
+          $inc: { pendingBalance: +amount},
+          $push: {
+            transactions: {
+              transactionId: transactionId,
+              transactionAmount: +amount,
+              transactionType: 'Deposit',
+              transactionStatus: 'Pending',
+              transactionPhoto: provePhoto,
+              transactionDate: Date.now(),
+            },
+          },
+        },
+        { new: true, runValidators: true }
+      )
+        .then((result) => {
+          console.log(result);
+          res.redirect('/student/wallet');
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/student/wallet?error=true');
+        });
+      })
+      .catch((err) => {
+        res.redirect('/student/wallet?error=true');
+      });
+
+
+  
+  }
+  catch (error ) {
+   res.redirect('/student/wallet?error=true');
+  }
+}
+
+// ================== END Wallet  ====================== //
+
+
+// ================== Settings  ====================== //
+
 const settings_get = async (req, res) => {
   try {
     res.render("student/settings", { title: "Settings", path: req.path, userData: req.userData });
@@ -926,6 +1000,10 @@ module.exports = {
   quiz_start,
   quizFinish,
   review_Answers,
+
+  wallet_get,
+
+  wallet_post,
 
   settings_get,
   settings_post,

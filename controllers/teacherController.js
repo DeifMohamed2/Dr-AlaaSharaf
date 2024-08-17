@@ -10,7 +10,8 @@ const mongoose = require('mongoose');
 
 const Excel = require('exceljs');
 
-const { v4: uuidv4 } = require('uuid')
+const { v4: uuidv4 } = require('uuid');
+const { wallet_get } = require("./studentController");
 
 
 
@@ -1994,6 +1995,36 @@ const searchToGetCode = async (req, res) => {
 // ================================================== END Handel Codes ================================================ // 
 
 
+
+
+// ================================================== Wallet ================================================ // 
+
+const admin_wallet_get = async (req, res) => {
+  const { Grade } = req.query
+  let perPage = 50;
+  let page = req.query.page || 1;
+
+  await User.find({ "Grade": Grade }, { Username: 1, Code: 1, phone: 1, parentPhone: 1, totalScore: 1, quizesInfo: 1 })
+    .skip(perPage * page - perPage)
+    .limit(perPage)
+    .exec()
+    .then(async (result) => {
+      const count = await User.countDocuments({});
+      const nextPage = parseInt(page) + 1;
+      const hasNextPage = nextPage <= Math.ceil(count / perPage);
+      const hasPreviousPage = page > 1; // Check if current page is greater than 1
+      res.render("teacher/wallet", { title: "Wallet", path: req.path, usersData: result, Grade: Grade, nextPage: hasNextPage ? nextPage : null, previousPage: hasPreviousPage ? page - 1 : null, currentPage: page });
+    })
+
+}
+
+
+
+// ================================================== END Wallet ================================================ // 
+
+
+
+
 const logOut = async (req, res) => {
   // Clearing the token cookie
   res.clearCookie('token');
@@ -2029,13 +2060,10 @@ module.exports = {
   searchForUserInQuiz,
   convertToExcelQuiz,
 
-
   addVideo_post,
   // uploadVideo,
   chapter_post,
   getAllChapters,
-  
-
 
   handleVideos_get,
   getAllChaptersInHandle,
@@ -2064,6 +2092,9 @@ module.exports = {
 
   searchToGetCode,
 
+  // Wallet
+
+  admin_wallet_get,
 
   logOut,
 };

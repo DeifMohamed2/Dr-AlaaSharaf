@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <%- include("./partials/head.ejs") %>
+
+  <body>
+    <style>
+        .amount{
+            width: 60%;
+            height: 50px;
+            border: 1px solid #ffbb55;
+            border-radius: 5px;
+            background-color: #5353536c;
+            color: #ffffff;
+            margin: 0 auto;
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .amount:focus{
+            outline: none;
+        }
+        .amount::placeholder{
+            color: #b9b9b9;
+        }
+        .proveLabel
+        {
+            color: #ffbb55;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+ 
+.file-input__input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-input__label {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  border: #ffbb55 1px solid;
+  font-size: 14px;
+  padding: 10px 12px;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
+}
+
+.file-input__label i {
+  height: 16px;
+  margin-right: 4px;
+}
+
+.buttonSendWalletReq
+{
+    background-color: #ffbb55;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+    </style>
+
+    <%- include("./partials/preloader.ejs") %>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2"><%- include("./partials/aside.ejs") %></div>
+
+        <!--------------------END ASIDE  ------------------>
+
+        <div class="col-lg-10">
+          <main>
+            <div class="row">
+              <div class="col-md-6"></div>
+              <div class="col-md-6">
+                <div class="left">
+                  <%- include("./partials/top.ejs") %>
+
+
+                <div class="alert alert-danger w-50 mt-4 " id="alert">
+                 
+                  <button class="BTNAlert"> <i class="fa-solid fa-x"></i></button>
+                  <h1 style="text-align: center; font-size: 18px; margin-bottom: 5px;">يبدو ان هناك خطأ ما تأكد من انك قمت برفع الصوره بشكل صحيح </h1>
+                
+                </div>
+
+
+                  <!-- END OF TOP -->
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3 ">
+              <div class="col-lg-12 text-center">
+                <div class="insights text-center mx-auto">
+                  <div class="sales  text-center">
+                    <span class="material-icons-sharp">wallet</span>
+                    <div >
+                      <div class="right mt-2  ">
+                        <h2 class="my-3">الرصيد الفعلي</h2>
+                        <h1 dir="ltr"  > <%= userData.totalBalance %>  E.L</h1>
+                      </div>
+                    </div>
+                    <small class="text-muted">last 24 hours</small>
+                  </div>
+                  <div class="expenses text-center">
+                    <span class="material-symbols-sharp">
+                      hourglass_bottom
+                    </span>
+                    <div class="">
+                      <div class="right">
+                        <h2 class="my-3">الرصيد المعلق</h2>
+                        <h1 dir="ltr"><%= userData.pendingBalance %> E.L</h1>
+                      </div>
+                    </div>
+                    <small class="text-muted">last 24 hours</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row my-3">
+                <h1>اضف رصيد</h1>
+            <form action="" method="post">
+                 <div class="text-center row">
+                    <div class="col-md-4">
+                         <input type="number" value="" name="amount" class="amount text-center" placeholder="اكتب المبلغ " required> 
+                        <input type="text" value="" name="provePhoto" id="provePhoto" style="width: 1px; height: 1px; background-color: transparent; border: none;" required>
+
+                    </div>
+
+                    <div class="col-md-4">
+                            <h2 class="proveLabel">ارفع اثبات التحويل </h2>
+                            <div class="file-input text-cente mt-3">
+                                <input type="file" name="file-input" id="file-input" class="file-input__input"  required />
+                                <label class="file-input__label" for="file-input">
+                                    <i class="fa-solid fa-upload  ms-3"></i>
+
+                                    <span id="provePhotoLabel" >رفع صوره</span>
+                                </label>
+                            </div>
+                 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <button class="buttonSendWalletReq">ارسال طلب</button>
+
+                    </div>
+  
+                </div>
+            </form>
+            <div class="row mt-3">
+              <div class="col-lg-11 col-sm-12">
+                <div class="student-table" style="margin: 0">
+                  <form action="" method="get">
+                    <div class="row" style="margin-bottom: 0 !important">
+                      <div class="col-md-6">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <button type="submit" class="primary">
+                              <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                          </div>
+
+                          <div
+                            class="col-md-1 d-flex justify-content-center align-items-center"
+                          ></div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <input
+                          type="text"
+                          class="mx-auto"
+                          name="searchInput"
+                          placeholder="بحث.."
+                        />
+                      </div>
+                    </div>
+                  </form>
+
+                  <table id="myTable">
+                    <thead>
+                      <th style="padding-left: 20px">رقم الطلب</th>
+                      <th style="padding-left: 20px">قيمه الطلب  </th>
+                      <th style="padding-left: 20px">تاريخ الطلب</th>
+                      <th style="padding-left: 20px">حاله الطلب</th>
+                    </thead>
+                    <tbody id="tbody">
+                        <% userData['transactions'].forEach(transition => { %>
+                            <tr>
+                                <td><%= transition.transactionId %></td>
+                                <td><%= transition.transactionAmount %></td>
+                                <td><%=  new Date(transition.transactionDate ).toLocaleString()%></td>
+                                <td>
+                                    <% if (transition.transactionStatus === 'Pending') { %>
+                                        <h2 style="color: rgb(242, 255, 0);">لم يقبل بعد</h2>
+                                    <% } else if (transition.transactionStatus === 'Success') { %>
+                                        <h2 style="color: rgb(0, 172, 0);">تم القبول</h2>
+                                    <% } else if (transition.transactionStatus === 'Denied') { %>
+                                        <h2 style="color: rgb(255, 0, 0);">تم الرفض</h2>
+                                    <% } %>
+                                </td>
+                              
+ 
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+
+        <!-------------------- END OF MAIN --------------------->
+      </div>
+    </div>
+
+
+    <script>
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Check if the 'error' query parameter is set to 'true'
+  if (urlParams.get('error') === 'true') {
+
+       let alertElement = document.getElementById('alert');
+
+          alertElement.style.display = 'block';
+          alertElement.classList.add('show');
+    
+          setTimeout(function() {
+            alertElement.classList.remove('show');
+            alertElement.classList.add('hide');
+          }, 15000);
+  }
+
+  
+    </script>
+
+<script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+          import {
+                getDatabase,
+                ref,
+                set,
+                onValue,
+                child,
+                get,
+                update,
+                remove,
+                push,
+            } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-database.js";
+            import {
+                getAuth,
+                createUserWithEmailAndPassword,
+                signInWithEmailAndPassword,
+                signOut,
+                GoogleAuthProvider,
+                signInWithPopup,
+                signInWithRedirect,
+                FacebookAuthProvider,
+                onAuthStateChanged,
+            } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
+            import {
+                getStorage,
+                ref as sRef,
+                uploadBytesResumable,
+                getDownloadURL,
+            } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-storage.js";
+
+            // Your web app's Firebase configuration
+            const dbfirebaseConfig = {
+                apiKey: "AIzaSyChX6oD8uA1tWR_hNzcVzOOZMYwXsLW-TA",
+                authDomain: "allasharaf.firebaseapp.com",
+                databaseURL: "https://allasharaf-default-rtdb.firebaseio.com",
+                projectId: "allasharaf",
+                storageBucket: "allasharaf.appspot.com",
+                messagingSenderId: "638342504235",
+                appId: "1:638342504235:web:f3350e5bb8a63e41bc2f6e"
+            };
+            const storageConfig = {
+                apiKey: "AIzaSyC0VUgV2B_ClqKImLQAafbklwKZRabod0A",
+                authDomain: "biodiva-fa1b0.firebaseapp.com",
+                databaseURL: "https://biodiva-fa1b0-default-rtdb.firebaseio.com",
+                projectId: "biodiva-fa1b0",
+                storageBucket: "biodiva-fa1b0.appspot.com",
+                messagingSenderId: "262124821606",
+                appId: "1:262124821606:web:09311e0be3fc9b7634a1a7"
+            };
+            const storageApp = initializeApp(storageConfig, "storage");
+            const dbApp = initializeApp(dbfirebaseConfig, "db");
+            const db = getDatabase(dbApp);
+            const authConfig = {
+                apiKey: "AIzaSyChX6oD8uA1tWR_hNzcVzOOZMYwXsLW-TA",
+                authDomain: "allasharaf.firebaseapp.com",
+                databaseURL: "https://allasharaf-default-rtdb.firebaseio.com",
+                projectId: "allasharaf",
+                storageBucket: "allasharaf.appspot.com",
+                messagingSenderId: "638342504235",
+                appId: "1:638342504235:web:f3350e5bb8a63e41bc2f6e"
+            };
+            const authApp = initializeApp(authConfig, "auth");
+            const auth = getAuth(authApp);
+            const dbRef = ref(db);
+
+
+
+            let files = [];
+            let reader = new FileReader();
+            let imgUrl;
+            var input = document.getElementById("file-input");
+
+
+            input.onchange = (e) => {
+                files = e.target.files;
+                reader.readAsDataURL(files[0]);
+                uploadphoto() 
+            };
+
+            reader.onload = function () {
+                // SelBtn.remove();
+                // editPhotoBtn.style.display = "inline";
+                // document.getElementById("imgUploaded").classList.remove("d-none");
+                // document.getElementById("imgUploaded").src = reader.result;
+
+            };
+
+            const provePhotoLabel = document.getElementById('provePhotoLabel');
+          
+            async function uploadphoto() {
+                var imgToUpload = files[0];
+
+                const metaData = {
+                    contentType: imgToUpload.type,
+                };
+
+                const storage = getStorage(storageApp);
+                console.log(imgToUpload);
+                const stroageRef = sRef(
+                    storage,
+                    "BioDiva/" + "New/" + files[0].name
+                );
+                const UploadTask = uploadBytesResumable(stroageRef, imgToUpload, metaData);
+                UploadTask.on(
+                    "state-changed",
+                    (snapshot) => {
+                        var progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        provePhotoLabel.innerHTML = progess.toFixed(2) + "%";
+                    },
+                    (error) => {
+                        console.log(error)
+
+                    },
+                    () => {
+                        getDownloadURL(UploadTask.snapshot.ref).then((downloadURL) => {
+                            imgUrl = downloadURL;
+                            document.getElementById('provePhoto').setAttribute('value', imgUrl)
+                            document.getElementById('provePhotoLabel').innerHTML = "تم الرفع"
+
+
+                        });
+                    }
+                );
+            }
+
+
+       
+
+        
+</script>
+
+
+
+
+    <script src="../assest/bootstrap.bundle.min.js"></script>
+    <script src="../assest/bootstrap.min.js"></script>
+  </body>
+</html>
