@@ -70,11 +70,67 @@
     cursor: pointer;
 }
 
+.acceptBtn {
+  background-color: #ffbb55;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  padding: 2px 20px;
+  font-size: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;   
+}
+.acceptBtn:hover {
+  background-color: #ffbb558b;
+  color: #000000;
+}
+
+.acceptBtnApp {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  padding: 2px 20px;
+  font-size: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.acceptBtnApp:hover {
+  background-color: #00ff008b;
+  color: #000000;
+}
+
     </style>
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">اثبات الدفع </h1>
+      </div>
+      <div class="modal-body">
+       <img src="" alt="" id="provePhoto">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-2"><%- include("./partials/nav.ejs") %></div>
+        <div class="col-lg-2">
+          <%- include("./partials/nav.ejs") %>
+        </div>
 
         <!--------------------END ASIDE  ------------------>
 
@@ -107,8 +163,8 @@
                     <span class="material-icons-sharp">wallet</span>
                     <div >
                       <div class="right mt-2  ">
-                        <h2 class="my-3">الرصيد الفعلي</h2>
-                        <h1 dir="ltr"  >  E.L</h1>
+                        <h2 class="my-3">مجموع الرصيد المستخدم من الطلاب</h2>
+                        <h1 dir="ltr"  > <%= allUsedBalance %> E.L</h1>
                       </div>
                     </div>
                     <small class="text-muted">last 24 hours</small>
@@ -119,8 +175,20 @@
                     </span>
                     <div class="">
                       <div class="right">
-                        <h2 class="my-3">الرصيد المعلق</h2>
-                        <h1 dir="ltr"> E.L</h1>
+                        <h2 class="my-3">مجموع الرصيد المعلق</h2>
+                        <h1 dir="ltr"> <%= allPendingBalance%> E.L</h1>
+                      </div>
+                    </div>
+                    <small class="text-muted">last 24 hours</small>
+                  </div>
+                  <div class="expenses text-center">
+                      <span >
+                     <i class="fa-solid fa-dollar-sign"></i>
+                    </span>
+                    <div class="">
+                      <div class="right">
+                        <h2 class="my-3">مجموع الرصيد المداع مع الطلاب</h2>
+                        <h1 dir="ltr"> <%= allDeposits %> E.L</h1>
                       </div>
                     </div>
                     <small class="text-muted">last 24 hours</small>
@@ -130,35 +198,57 @@
             </div>
 
             <div class="row my-3">
-                <h1>اضف رصيد</h1>
-            <form action="" method="post">
-                 <div class="text-center row">
-                    <div class="col-md-4">
-                         <input type="number" value="" name="amount" class="amount text-center" placeholder="اكتب المبلغ " required> 
-                        <input type="text" value="" name="provePhoto" id="provePhoto" style="width: 1px; height: 1px; background-color: transparent; border: none;" required>
+                <h1> متابعه الارصده</h1>
+                  <form action="/teacher/wallet" method="get">
+                             
+                                    <select name="Grade" class="Grade">
+                                      <% if (grade=="Grade1") { %>
+                                            <option selected value="Grade1">الصف الاول الثانوي</option>
+                                            <option value="Grade2">الصف الثاني الثانوي </option>
+                                            <option value="Grade3">الصف الثالث الثانوي</option>
 
-                    </div>
+                                      <% } else if (grade=="Grade2") { %>
+                                            <option  value="Grade1">الصف الاول الثانوي</option>
+                                            <option selected value="Grade2">الصف الثاني الثانوي </option>
+                                            <option value="Grade3">الصف الثالث الثانوي</option>
 
-                    <div class="col-md-4">
-                            <h2 class="proveLabel">ارفع اثبات التحويل </h2>
-                            <div class="file-input text-cente mt-3">
-                                <input type="file" name="file-input" id="file-input" class="file-input__input"  required />
-                                <label class="file-input__label" for="file-input">
-                                    <i class="fa-solid fa-upload  ms-3"></i>
+                                      <% } else if (grade=="Grade3") { %>
 
-                                    <span id="provePhotoLabel" >رفع صوره</span>
-                                </label>
-                            </div>
-                 
-                    </div>
+                                            <option  value="Grade1">الصف الاول الثانوي</option>
+                                            <option value="Grade2">الصف الثاني الثانوي </option>
+                                            <option selected value="Grade3">الصف الثالث الثانوي</option>
 
-                    <div class="col-md-4 mb-2">
-                        <button class="buttonSendWalletReq">ارسال طلب</button>
+                                      <% } %>
+                                        </select>
+                                    <select name="Status" class="Grade">
+                                      <% if (status=="Pending") { %>
+                                          <option  selected value="Pending">الطلبات المعلقه</option>
+                                          <option   value="Approved">الطلبات المقبولة</option>
+                                          <option  value="Purchases">عمليات الشراء </option>
+                                          <option  value="Balance">رصيد الطلاب</option>
 
-                    </div>
-  
-                </div>
-            </form>
+                                      <% } else if (status=="Approved") { %>
+                                          <option   value="Pending">الطلبات المعلقه</option>
+                                          <option  selected value="Approved">الطلبات المقبولة</option>
+                                          <option  value="Purchases">عمليات الشراء </option>
+                                          <option  value="Balance">رصيد الطلاب</option>
+                                      <% } else if (status=="Purchases") { %>
+                                          <option   value="Pending">الطلبات المعلقه</option>
+                                          <option   value="Approved">الطلبات المقبولة</option>
+                                          <option  selected value="Purchases">عمليات الشراء </option>
+                                          <option  value="Balance">رصيد الطلاب</option>
+                                      <% } else if (status=="Balance") { %>
+                                          <option   value="Pending">الطلبات المعلقه</option>
+                                          <option   value="Approved">الطلبات المقبولة</option>
+                                          <option  value="Purchases">عمليات الشراء </option>
+                                          <option  selected value="Balance">رصيد الطلاب</option>
+                                      <% } %>
+                                      </select>
+
+                                    <button class="btn btn-outline-warning me-5 mt-4" >Get Data</button>
+                         
+                  </form>
+            </div>      
             <div class="row mt-3">
               <div class="col-lg-11 col-sm-12">
                 <div class="student-table" style="margin: 0">
@@ -188,16 +278,101 @@
                       </div>
                     </div>
                   </form>
-
+  
                   <table id="myTable">
                     <thead>
+                      
+                      <% if (status=="Purchases") { %>
+                       
                       <th style="padding-left: 20px">رقم الطلب</th>
+                      <th style="padding-left: 20px">اسم الطالب </th>
+                      <th style="padding-left: 20px">كود الطالب </th>
+                      <th style="padding-left: 20px">قيمه الشراء  </th>
+                      <th style="padding-left: 20px"> اسم الفيديو</th>          
+                      <th style="padding-left: 20px">تاريخ الشراء</th>
+                      <th style="padding-left: 20px">  </th>
+                      <th style="padding-left: 20px"> </th>
+
+                      <% } else if(status=="Pending" || status == "Approved") {%>
+
+                      <th style="padding-left: 20px">رقم الطلب</th>
+                      <th style="padding-left: 20px">اسم الطالب </th>
+                      <th style="padding-left: 20px">كود الطالب </th>
                       <th style="padding-left: 20px">قيمه الطلب  </th>
+                   
                       <th style="padding-left: 20px">تاريخ الطلب</th>
-                      <th style="padding-left: 20px">حاله الطلب</th>
+                      <th style="padding-left: 20px">اثبات الدفع </th>
+               
+
+                      <% } else if(status=="Balance") {%>
+                        <th style="padding-left: 20px"> كود الطالب</th>
+                        <th style="padding-left: 20px">اسم الطالب </th>
+                        <th style="padding-left: 20px"> الرصيد الفعلي  </th>
+                        <th style="padding-left: 20px"> الرصيد المعلق  </th>
+                        <th style="padding-left: 20px">  </th>
+                        <th style="padding-left: 20px">  </th>
+                      <% } %>
+
                     </thead>
                     <tbody id="tbody">
-                   
+                        <% transactions.forEach(tran => { %>
+
+                          <% if (status=="Purchases") { %>
+                              <tr>
+                                <td style="padding-left: 20px"><%= tran.transactionId  %></td>
+                                <td style="padding-left: 20px"><%= tran.transactionUser['Username']  %></td>
+                                <td style="padding-left: 20px"><%= tran.transactionUser['Code']  %></td>
+                                <td style="padding-left: 20px" dir="ltr"><%= tran.transactionAmount %> E.L</td>
+                     
+                                <td style="padding-left: 20px"><%= tran.transactionUsedIn || "" %></td>
+                       
+                                <td><%=  new Date(tran.transactionDate ).toLocaleString()%></td>
+                    
+                              </tr>
+                          <% } else if(status=="Pending" || status == "Approved") {%>
+                               <tr>
+                        <td style="padding-left: 20px"><%= tran.transactionId  %></td>
+                        <td style="padding-left: 20px"><%= tran.transactionUser['Username']  %></td>
+                        <td style="padding-left: 20px"><%= tran.transactionUser['Code']  %></td>
+                        <td style="padding-left: 20px" dir="ltr"><%= tran.transactionAmount %> E.L</td>
+                 
+                        <td><%=  new Date(tran.transactionDate ).toLocaleString()%></td>
+                        <td style="padding-left: 20px;"><button type="button" class="btn btn-outline-warning" id="<%= tran.transactionPhoto %>" onclick="showPhoto(this.id)"  class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">اظهار الصوره</button></td>
+                 
+                      <% if (status=='Pending' ) { %>
+                        <form action="/teacher/wallet/acceptRequest/<%= tran.transactionId %>" method="post">
+                          <td style="padding-left: 20px"><button type="submit" class="acceptBtn"  >قبول الطلب</button></td>
+                        </form>
+                       
+                      <% } else if(status=='Approved' ) {%>
+                        <td style="padding-left: 20px"><button type="button" class="acceptBtnApp"  >تم الدفع</button></td>
+                      <% } %>
+
+                              </tr>
+                          <% } %>  
+                            
+                     
+                        <% }) %>
+
+                        <% if(status=="Balance")  { %>
+                          <% usersBalance.forEach(user => { %>
+                             <tr>
+                                <td style="padding-left: 20px"><%= user.Code  %></td>
+                                <td style="padding-left: 20px"><%= user.Username%></td>
+                                <td style="padding-left: 20px" dir="ltr"><%= user.totalBalance %> E.L</td>
+                                <td style="padding-left: 20px" dir="ltr"><%= user.pendingBalance %> E.L</td>
+
+                                  <form action="/teacher/wallet/addBalance/<%= user.id %>" method="post">
+                                            <div class="text-center">
+                                                  <td><input type="number" name="amountAdded" class="ms-3 my-2"  style="position:unset;  " dir="ltr" required></td>
+                                                  <td><button class="btn btn-outline-light" style="border-radius: 10px !important;">Add</button></td>
+                                            </div>
+                                </form>
+                                        
+                              </tr>
+                          <% }) %>
+                        <% } %>
+
                     </tbody>
                   </table>
                 </div>
@@ -210,6 +385,7 @@
       </div>
     </div>
 
+    
 
     <script>
 
@@ -229,7 +405,10 @@
           }, 15000);
   }
 
-  
+      function showPhoto(id)
+        {
+            document.getElementById('provePhoto').src = id;
+        }
     </script>
 
 <script type="module">

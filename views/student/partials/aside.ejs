@@ -15,7 +15,13 @@
       </b></p>
     <a href=""><i class="fa-solid fa-brain"><span class="ms-2" style="font-size: 1.3rem">
           <%= userData.totalScore %>
-        </span></i></a><a href="/student/dash" class="<%= path === '/dash' ? 'active' : '' %>"><i class="fa-solid fa-gauge"></i>
+        </span></i></a>
+    <a href=""><i class="fa-solid fa-wallet"><span class="ms-2" style="font-size: 1.3rem">
+          <%= userData.totalBalance%>
+        </span></i></a>
+
+
+        <a href="/student/dash" class="<%= path === '/dash' ? 'active' : '' %>"><i class="fa-solid fa-gauge"></i>
       <h3>لوحه تحكمي</h3>
     </a><a href="/student/exams" class="<%= path === '/exams' ? 'active' : '' %>"><span class="material-icons-sharp">quiz</span>
       <h3>الامتحانات</h3>

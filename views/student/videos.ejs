@@ -24,14 +24,18 @@
                 
                 <div class="alert alert-danger" id="alert" style="display: none;">
                   <h1>الكود خاطئ</h1>
-                  <h2>الأسباب ممكن تكون: </h2>
-                  <ol type="a">
-                    <li><h2>الكود مستخدم من قبل</h2></li>
-                    <li><h2>الكود مش بتاع الحصة أو الباب ده</h2></li>
-                    <li><h2>الكود مكتوب غلط</h2></li>
-                  </ol>
+                  <h1>او الرصيد غير كافي</h1>
+      
                 </div>
           
+
+                <div class="row">
+                  <div class="col-md-4">
+                          <button class="btn btn-primary lecSumSolBTn ms-3" style="font-size: 1.5rem; font-weight: bold;" onclick="window.location.href=window.location.pathname + '?buyBy=Code'">شراء بكود</button>
+                          <button class="btn btn-primary lecSumSolBTn" style="font-size: 1.5rem; font-weight: bold;" onclick="window.location.href=window.location.pathname + '?buyBy=Wallet'">شراء برصيد</button>
+
+                  </div>
+                </div>
          
                 
                 <div class="row courses" style="margin-top: 0 !important;" id="Videos">
@@ -80,16 +84,21 @@
                                       <% if (lecture.paymentStatus === "Pay") { %> 
                                           
                                         <% if (!lecture.isPaid) { %>
-                                          <form action="/student/buyVideo/<%= lecture._id %>" method="post" id="l<%= lecture._id %>" onsubmit="handleFormSubmission(event)">
+                                          
+                                          <% if (buyBy=="Code") { %>
+                                                 <form action="/student/buyVideo/<%= lecture._id %>" method="post" id="l<%= lecture._id %>" onsubmit="handleFormSubmission(event)">
       
                                             <input type="text"  name="code" placeholder="ادخل الكود" required>
                                             <button type="submit" class="btn btn-primary" >استخدام الكود</button> 
-                                            <div class="enterBox">
-                                              <span style="font-weight: bolder; font-size:1.4rem;"><%= lecture.Attemps %></span>
-                                              <span style="font-weight: bolder; font-size: 1.65rem;"> : </span>
-                                              <i class="fa-solid fa-right-to-bracket"></i>
-                                            </div>
+                                          
                                           </form>
+                                          <% } else if(buyBy=="Wallet") { %>
+                                             <form action="/student/buyVideoByWallet/<%= lecture._id %>" method="post" >
+                                                                                           
+                                        <button type="button" id="useWallet" class="btn btn-primary mb-2" >استخدام رصيدي</button> <br>
+                                        <button type="submit" id="confirmBuy" class="btn btn-outline-warning w-25 d-none" > شراء </button> 
+                                          </form>
+                                            <% } %>
                                         <% } else{ %>
                                           <a href="<%= chapterId %>/watch/<%= lecture._id %>">  <button  class="btn btn-primary" >مشاهده</button></a>
                                           <div class="enterBox">
@@ -160,7 +169,7 @@
 
     <script src="/assest/bootstrap.min.js"></script>
     <script src="/assest/bootstrap.bundle.min.js"></script>
-    
+
     <script>
       function handleFormSubmission(event) {
           event.preventDefault(); // Prevent default form submission
@@ -173,8 +182,13 @@
               body: new FormData(form)
           })
           .then(response => {
+              if (window.location.search) {
+    const urlWithoutQuery = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, urlWithoutQuery);
+}
               if (response.status === 204) {
                   // If response status is 201 (Created), refresh the page
+                  
                   window.location.reload();
               } else {
                 
@@ -186,7 +200,7 @@
           setTimeout(function() {
             alertElement.classList.remove('show');
             alertElement.classList.add('hide');
-          }, 40000);
+          }, 5000);
               }
           })
           .catch(error => {
@@ -194,6 +208,27 @@
           });
       }
   </script>
+
+
+    <script>
+      // Check if the URL contains the error parameter
+const urlParams = new URLSearchParams(window.location.search);
+const errorBalance = urlParams.get('errorBalance');
+
+
+  if (errorBalance) {
+    document.getElementById('alert').style.display = 'block';
+    setTimeout(()=> {
+      document.getElementById('alert').style.display = 'none';
+      document.getElementById('alert').classList.add('hide');
+    }, 4000); // Set the timeout to 5000 milliseconds (5 seconds)
+  } else {
+    document.getElementById('alert2').style.display = 'none';
+  }
+
+    </script>
+
+
     <script>
       // Get the current URL path
       const currentPath = window.location.pathname;
@@ -207,5 +242,17 @@
         document.querySelector('.solving-button').classList.add('activate');
       }
     </script>
+
+
+    
+    <script>
+      const useWallet = document.getElementById('useWallet');
+      const confirmBuy = document.getElementById('confirmBuy');
+      useWallet.addEventListener('click', () => {
+        confirmBuy.classList.toggle('d-none');
+      });
+ 
+    </script>
+
   </body>
 </html>

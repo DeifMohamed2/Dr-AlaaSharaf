@@ -205,11 +205,11 @@
                                 <td><%=  new Date(transition.transactionDate ).toLocaleString()%></td>
                                 <td>
                                     <% if (transition.transactionStatus === 'Pending') { %>
-                                        <h2 style="color: rgb(242, 255, 0);">لم يقبل بعد</h2>
-                                    <% } else if (transition.transactionStatus === 'Success') { %>
-                                        <h2 style="color: rgb(0, 172, 0);">تم القبول</h2>
+                                        <h2 style="color: rgb(242, 255, 0);">لم يقبل بعد <i class="fa-solid fa-hourglass-start"></i></h2>
+                                    <% } else if (transition.transactionStatus === 'Approved') { %>
+                                        <h2 style="color: rgb(0, 220, 0);">تم القبول  <i class="fa-regular fa-circle-check"></i></h2>
                                     <% } else if (transition.transactionStatus === 'Denied') { %>
-                                        <h2 style="color: rgb(255, 0, 0);">تم الرفض</h2>
+                                        <h2 style="color: rgb(255, 0, 0);">تم الرفض  <i class="fa-regular fa-circle-xmark"></i></h2>
                                     <% } %>
                                 </td>
                               

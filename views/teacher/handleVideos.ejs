@@ -80,18 +80,18 @@
                                                         <select id="ChaptersNames" name="ChaptersIds"
                                                             class="Grade w-100 text-center">
 
-                                                            <% }else { %>
+                                                    <% }else { %>
 
                                                                 <select id="ChaptersNames" name="ChaptersIds" disabled
                                                                     class="Grade w-100 text-center">
-                                                                    <% } %>
+                                                             <% } %>
 
-                                                                        <option>اختر اسم chapter </option>
+                                                                    <option>اختر اسم chapter </option>
 
-                                                                        <% if (chaptersData) { %>
-                                                                            <% chaptersData.forEach(chapter=> { %>
-                                                                                <option
-                                                                                    value="<%= chapter.chapterId %>">
+                                                                    <% if (chaptersData) { %>
+                                                                      <% chaptersData.forEach(chapter=> { %>
+                                                                        <option
+                                                                                value="<%= chapter.chapterId %>">
                                                                                     <%= chapter.chapterName %>
                                                                                 </option>
                                                                                 <% }) %>

@@ -92,6 +92,15 @@ router.post("/addVideo" , teacherController.addVideo_post);
 
 router.get('/wallet', authMiddleware, teacherController.admin_wallet_get);
 
+router.post('/wallet', authMiddleware, teacherController.admin_wallet_post);
+
+
+router.post( '/wallet/addBalance/:studentID', authMiddleware, teacherController.addBalance);
+
+router.post( '/wallet/acceptRequest/:transactionId', authMiddleware, teacherController.acceptRequest );
+
+
+
 
 
 //  ================== END Wallet ====================== //

@@ -47,9 +47,11 @@ router.get("/dash",authenticateUser, studentController.dash_get);
 
 
 // ================== Videos ====================== //
-router.get("/chapters",authenticateUser, studentController.chapters_get);
+router.get("/chapters",authenticateUser, studentController.chapters_get)
 
 router.post("/buyChapter/:cahpterId",authenticateUser, studentController.buyChapter);
+
+router.post('/buyChapterByWallet/:cahpterId', authenticateUser,studentController.buyChapterByWallet );
 
 router.get("/videos/lecture/:cahpterId",authenticateUser, studentController.lecture_get);
 
@@ -58,6 +60,9 @@ router.get("/videos/summaries/:cahpterId",authenticateUser, studentController.su
 router.get("/videos/Solving/:cahpterId",authenticateUser, studentController.solv_get);
 
 router.post("/buyVideo/:videoId",authenticateUser, studentController.buyVideo);
+
+router.post("/buyVideoByWallet/:videoId",authenticateUser, studentController.buyVideoByWallet);
+
 
 
 

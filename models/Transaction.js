@@ -27,6 +27,11 @@ const TransactionSchema = new Schema({
         type: String,
         required: true
     },
+    transactionUsedIn: {
+        type: String,
+        default: '',
+        required: false
+    },
     transactionGrade: {
         type: String,
         required: true

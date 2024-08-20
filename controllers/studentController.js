@@ -37,12 +37,13 @@ const dash_get = async (req, res) => {
 
 const chapters_get = async (req, res) => {
   try {
+    const buyBy = req.query.buyBy || "Code"
     const chapters = await Chapter.find({ "chapterGrade": req.userData.Grade ,"ARorEN" :req.userData.ARorEN }).sort({ createdAt: 1 });
     const paidChapters = chapters.map(chapter => {
       const isPaid = req.userData.chaptersPaid.includes(chapter._id);
       return { ...chapter.toObject(), isPaid };
     });
-    res.render("student/chapters", { title: "Videos", path: req.path, chapters: paidChapters, userData: req.userData });
+    res.render("student/chapters", { title: "Videos", path: req.path, chapters: paidChapters, userData: req.userData ,buyBy });
   } catch (error) {
     res.send(error.message);
   }
@@ -70,6 +71,51 @@ const buyChapter = async (req, res) => {
   }
 };
 
+const buyChapterByWallet = async (req, res) => { 
+  try {
+        const transactionId = Math.floor(Math.random() * (500000 - 100000 + 1)) + 100000;
+
+    const cahpterId = req.params.cahpterId;
+     await Chapter.findById(cahpterId, {
+       chapterName: 1,
+       chapterPrice: 1,
+     }).then(async (chapterData) => {
+        if (req.userData.totalBalance >= chapterData.chapterPrice) {
+          await User.findByIdAndUpdate(req.userData._id, {
+            $push: { chaptersPaid: cahpterId },
+            $inc: { totalBalance: -chapterData.chapterPrice },
+          }).then(async(result) => {
+            await Transaction.create({ 
+              transactionId : transactionId,
+              transactionType: "Withdraw",
+              transactionPhoto : "Chapter",
+              transactionAmount: +chapterData.chapterPrice,
+              transactionStatus: "Approved",
+              transactionUser: req.userData._id,
+              transactionUsedIn: chapterData.chapterName,
+              transactionGrade: req.userData.Grade,
+              transactionDate: Date.now()
+            }).then(() => {
+                res.redirect('/student/videos/lecture/' + cahpterId);   
+            }).catch((err) => {
+              console.log(err);
+              res.redirect('/student/chapters?errorBalance=true');
+            });
+          }).catch((err) => {
+            console.log(err);
+            res.redirect('/student/chapters?errorBalance=true');
+          } );
+          
+        } else {
+          res.redirect('/student/chapters?errorBalance=true');
+        }
+     });
+  
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+
 
 
 // ================== End Chapter  ====================== //
@@ -81,6 +127,7 @@ const buyChapter = async (req, res) => {
 
 const lecture_get = async (req, res) => {
   try {
+    const buyBy = req.query.buyBy || "Code"
     const cahpterId = req.params.cahpterId;
     const chapter = await Chapter.findById(cahpterId, { chapterLectures: 1 ,chapterAccessibility:1});
     const isPaid = req.userData.chaptersPaid.includes(cahpterId);
@@ -129,10 +176,10 @@ const lecture_get = async (req, res) => {
     console.log(paidVideos);
 
    if (chapter.chapterAccessibility === "EnterInFree") {
-    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId});
+    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId ,buyBy});
     }else{
       if (isPaid) {
-        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData,chapterId:cahpterId });
+        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData,chapterId:cahpterId ,buyBy });
       } else {
         res.redirect('/student/chapters');
       }
@@ -147,6 +194,7 @@ const lecture_get = async (req, res) => {
 
 const sum_get = async (req, res) => {
   try {
+    const buyBy = req.query.buyBy || 'Code';
     const cahpterId = req.params.cahpterId;
     const chapter = await Chapter.findById(cahpterId, { chapterSummaries: 1 ,chapterAccessibility:1});
     const isPaid = req.userData.chaptersPaid.includes(cahpterId);
@@ -195,10 +243,10 @@ const sum_get = async (req, res) => {
     console.log(paidVideos);
 
    if (chapter.chapterAccessibility === "EnterInFree") {
-    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId});
+    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId ,buyBy});
     }else{
       if (isPaid) {
-        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId });
+        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId ,buyBy});
       } else {
         res.redirect('/student/chapters');
       }
@@ -212,6 +260,7 @@ const sum_get = async (req, res) => {
 
 const solv_get = async (req, res) => {
   try {
+    const buyBy = req.query.buyBy || 'Code';
     const cahpterId = req.params.cahpterId;
     const chapter = await Chapter.findById(cahpterId, { chapterSolvings: 1 ,chapterAccessibility:1});
     const isPaid = req.userData.chaptersPaid.includes(cahpterId);
@@ -260,10 +309,10 @@ const solv_get = async (req, res) => {
     console.log(paidVideos);
 
    if (chapter.chapterAccessibility === "EnterInFree") {
-    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId});
+    res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData ,chapterId:cahpterId ,buyBy});
     }else{
       if (isPaid) {
-        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData,chapterId:cahpterId });
+        res.render("student/videos", { title: "Lecture", path: req.path, chapterLectures: paidVideos, userData: req.userData,chapterId:cahpterId ,buyBy });
       } else {
         res.redirect('/student/chapters');
       }
@@ -279,31 +328,34 @@ const buyVideo = async (req, res) => {
   try {
     const videoId = req.params.videoId;
     const code = req.body.code;
-    console.log(videoId, code);
+
 
     // Update Code document
     const CodeData = await Code.findOneAndUpdate(
-      { "Code": code, "isUsed": false },
-      { "isUsed": true, "usedBy": req.userData.Code },
+      { Code: code, isUsed: false },
+      { isUsed: true, usedBy: req.userData.Code },
       { new: true }
     );
 
     if (CodeData) {
       // Check if the videoId exists in videosInfo array before updating
-      const user = await User.findOne({ _id: req.userData._id, "videosInfo._id": videoId });
+      const user = await User.findOne({
+        _id: req.userData._id,
+        'videosInfo._id': videoId,
+      });
       if (user) {
         // Update User document
         await User.findOneAndUpdate(
-          { _id: req.userData._id, "videosInfo._id": videoId },
-          { 
-            $push: { videosPaid: videoId }, 
+          { _id: req.userData._id, 'videosInfo._id': videoId },
+          {
+            $push: { videosPaid: videoId },
             $inc: { totalSubscribed: 1 },
-            $set: { 'videosInfo.$.videoPurchaseStatus': true } 
+            $set: { 'videosInfo.$.videoPurchaseStatus': true },
           }
         );
         res.status(204).send();
       } else {
-        res.status(301).send()
+        res.status(301).send();
       }
     } else {
       res.status(301).send();
@@ -313,6 +365,64 @@ const buyVideo = async (req, res) => {
   }
 }
 
+const buyVideoByWallet = async (req, res) => {
+  try {
+    const videoId = req.params.videoId;
+    const userId = req.userData._id;
+    const transactionId =
+      Math.floor(Math.random() * (500000 - 100000 + 1)) + 100000;
+
+    // Get the video price
+    const video = await Chapter.findOne(
+      { 'chapterLectures._id': videoId },
+      { 'chapterLectures.$': 1 }
+    );
+
+    const videoPrice = video.chapterLectures[0].videoPrice;
+    // Check if the user has enough balance
+    if (req.userData.totalBalance >= videoPrice) {
+      // Update the user's total balance and add the video to the videosPaid array
+      await User.updateOne(
+        { _id: userId, 'videosInfo._id': videoId }, // Find the user by ID and locate the specific video by its _id
+        {
+          $set: { 'videosInfo.$.videoPurchaseStatus': true }, // Update the videoPurchaseStatus to true
+          $push: { videosPaid: videoId }, // Add the videoId to videosPaid array
+          $inc: { totalSubscribed: 1, totalBalance: -videoPrice }, // Increment and decrement the appropriate fields
+        }
+      ).then(async (result) => {
+        // Create a transaction record
+        await Transaction.create({
+          transactionId: transactionId,
+          transactionType: 'Withdraw',
+          transactionPhoto: 'Video',
+          transactionAmount: +videoPrice,
+          transactionStatus: 'Approved',
+          transactionUser: userId,
+          transactionUsedIn: video.chapterLectures[0].videoTitle,
+          transactionGrade: req.userData.Grade,
+          transactionDate: Date.now(),
+        })
+          .then(() => {
+            res.redirect(
+              'back'
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+            res.redirect(
+              '/student/videos/lecture/' + video._id + '?errorBalance=true'
+            );
+          });
+      });
+    } else {
+      res.redirect(
+        '/student/videos/lecture/' + video._id + '?errorBalance=true'
+      );
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+};
 
 // ================== End Lecture  ====================== //
 
@@ -891,6 +1001,7 @@ const wallet_post = async (req, res) => {
       transactionGrade: req.userData.Grade,
       transactionUser: req.userData._id,
       transactionPhoto: provePhoto,
+      transactionUsedIn : "",
       transactionDate: Date.now(),
     })
       .then(async () => {
@@ -921,6 +1032,7 @@ const wallet_post = async (req, res) => {
         });
       })
       .catch((err) => {
+               console.log(err);
         res.redirect('/student/wallet?error=true');
       });
 
@@ -982,10 +1094,12 @@ module.exports = {
 
   chapters_get,
   buyChapter,
+  buyChapterByWallet,
   lecture_get,
   sum_get,
   solv_get,
   buyVideo,
+  buyVideoByWallet,
   
   watch_get,
   uploadHW,

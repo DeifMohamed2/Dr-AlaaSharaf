@@ -1,6 +1,7 @@
 const Quiz = require("../models/Quiz");
 const User = require("../models/User");
 const Chapter = require("../models/Chapter");
+const Transaction = require('../models/Transaction');
 const Code = require("../models/Code");
 const mongoose = require('mongoose');
 
@@ -16,7 +17,7 @@ const { wallet_get } = require("./studentController");
 
 
 
-const dash_get = (req, res) => {
+const dash_get = async (req, res) => {
 //   const idsToKeep = [
 //     "65e4cfe6022bba8f9ed4a80f",
 //     "65e4d024022bba8f9ed4a811",
@@ -31,7 +32,21 @@ const dash_get = (req, res) => {
 //   .catch(error => {
 //       console.error("Error deleting users:", error);
 //   });
+await User.updateMany(
+  {}, // An empty filter object {} matches all documents in the collection
+  {
+    $set: {
+      quizesInfo: [], // Set quizesInfo to an empty array
+      videosInfo: [],
+      chaptersPaid: [],
+      transactions: [],
+      videosPaid : [],
+      examsPaid : [],
 
+      // Set videosInfo to an empty array
+    },
+  }
+);
   res.render("teacher/dash", { title: "DashBoard", path: req.path });
 };
 
@@ -2000,25 +2015,175 @@ const searchToGetCode = async (req, res) => {
 // ================================================== Wallet ================================================ // 
 
 const admin_wallet_get = async (req, res) => {
-  const { Grade } = req.query
-  let perPage = 50;
-  let page = req.query.page || 1;
+  const { Grade, Status } = req.query;
 
-  await User.find({ "Grade": Grade }, { Username: 1, Code: 1, phone: 1, parentPhone: 1, totalScore: 1, quizesInfo: 1 })
-    .skip(perPage * page - perPage)
-    .limit(perPage)
-    .exec()
-    .then(async (result) => {
-      const count = await User.countDocuments({});
-      const nextPage = parseInt(page) + 1;
-      const hasNextPage = nextPage <= Math.ceil(count / perPage);
-      const hasPreviousPage = page > 1; // Check if current page is greater than 1
-      res.render("teacher/wallet", { title: "Wallet", path: req.path, usersData: result, Grade: Grade, nextPage: hasNextPage ? nextPage : null, previousPage: hasPreviousPage ? page - 1 : null, currentPage: page });
+  let grade = Grade || "Grade1";
+  let status = Status || "Pending";
+  let transactions = [];
+  let usersBalance = [];
+  const allUsedBalance = await Transaction.aggregate([
+    {
+      $match: {
+        transactionGrade: grade,
+        transactionType: 'Withdraw',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$transactionAmount' },
+      },
+    },
+  ]);
+
+  const allPendingBalance = await Transaction.aggregate([
+    {
+      $match: {
+        transactionGrade: grade,
+        transactionStatus: 'Pending',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$transactionAmount' },
+      },
+    },
+  ]);
+
+  const allDeposits = await Transaction.aggregate([
+    {
+      $match: {
+        transactionGrade: grade,
+        transactionType: 'Deposit',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$transactionAmount' },
+      },
+    },
+  ]);
+
+
+
+  if (status == 'Pending' || status == 'Approved') {
+    transactions = await Transaction.find({
+      transactionGrade: grade,
+      transactionStatus: status,
     })
+      .populate(
+        'transactionUser',
+        'Username Code phone parentPhone pendingBalance totalBalance'
+      )
+      .sort({ createdAt: -1 });
+  } else if (status == 'Purchases') {
+    transactions = await Transaction.find({
+      transactionGrade: grade,
+      transactionType: "Withdraw",
+    })
+      .populate(
+        'transactionUser',
+        'Username Code phone parentPhone pendingBalance totalBalance'
+      )
+      .sort({ createdAt: -1 });
+  }else if (status == 'Balance') {
+    usersBalance = await User.find(
+      { Grade: grade },
+      { Username: 1, Code: 1, pendingBalance: 1, totalBalance: 1 }
+    ).sort({ totalBalance: -1 });
+  }
 
+  console.log(transactions)
+  res.render('teacher/wallet', {
+    title: 'Wallet',
+    path: req.path,
+    transactions,
+    grade,
+    status,
+    allUsedBalance:
+      allUsedBalance[0] == undefined ? 0 : allUsedBalance[0]['total'],
+    allPendingBalance:
+      allPendingBalance[0] == undefined ? 0 : allPendingBalance[0]['total'],
+    allDeposits: allDeposits[0] == undefined ? 0 : allDeposits[0]['total'],
+    usersBalance,
+  });
 }
 
 
+const addBalance = async (req, res) => { 
+    try {
+      const {studentID} = req.params
+      const { amountAdded } = req.body;
+
+      const user = await User.findByIdAndUpdate(
+        studentID,
+        { $inc: { totalBalance: +amountAdded } },
+        { new: true }
+      ); 
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      res.redirect('back')
+
+    } catch (error) {
+      console.log(error)
+    }
+}
+
+
+const acceptRequest = async (req,res)=>{
+  try {
+    const { transactionId } = req.params;
+    await Transaction.findOneAndUpdate(
+      { transactionId: transactionId },
+      { transactionStatus: 'Approved' },
+      { new: true }
+    ).populate ( 'transactionUser', 'Username Code phone parentPhone pendingBalance totalBalance' )
+    .then(async (user) => {
+      await User.findOneAndUpdate(
+        {
+          _id: user.transactionUser['_id'],
+          'transactions.transactionId': +user.transactionId,
+        },
+        {
+          $inc: {
+            pendingBalance: -user.transactionAmount,
+            totalBalance: user.transactionAmount,
+          },
+          $set: {
+            'transactions.$.transactionStatus': 'Approved',
+          },
+        },
+        { new: true }
+      )
+        .then((result) => {
+          console.log(result);
+          res.redirect('back');
+        })
+        .catch((error) => {
+          res.send(error);
+        });
+    } )
+    .catch((error) => {
+      res.send (error)
+    } );
+    
+   
+   
+
+  } catch (error) {
+    console.log(error)
+  }
+   
+}
+
+
+const admin_wallet_post = async (req, res) => {
+  
+};
 
 // ================================================== END Wallet ================================================ // 
 
@@ -2095,6 +2260,10 @@ module.exports = {
   // Wallet
 
   admin_wallet_get,
+  admin_wallet_post,
+
+  addBalance,
+  acceptRequest,
 
   logOut,
 };

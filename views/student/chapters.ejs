@@ -25,17 +25,24 @@
             <div class="row">
               <div class="col-md-12">
               
-                <div class="alert alert-danger" id="alert" style="display: none;">
-                  <h1>الكود خاطئ</h1>
-                  <h2>الأسباب ممكن تكون: </h2>
-                  <ol type="a">
-                    <li><h2>الكود مستخدم من قبل</h2></li>
-                    <li><h2>الكود مش بتاع الحصة أو الباب ده</h2></li>
-                    <li><h2>الكود مكتوب غلط</h2></li>
-                  </ol>
+                <div class="alert alert-danger mt-1" id="alert" style="display: none;">
+                  <h1 class="mt-1">خطأ</h1>
+                  <h2>الكود الذي ادخلته غير صحيح</h2>
+                </div>
+                <div class="alert alert-danger mt-1" id="alert2" style="display: none;">
+                  <h1 class="mt-1">رصيدك غير كافي</h1>
+                  <h2>الرصيد المتاح لديك: <%= userData.totalBalance %></h2>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4">
+                          <button class="btn btn-primary lecture-button lecSumSolBTn ms-3" style="font-size: 1.5rem; font-weight: bold;" onclick="window.location.href='/student/chapters?buyBy=Code'">شراء بكود</button>
+                          <button class="btn btn-primary lecture-button lecSumSolBTn" style="font-size: 1.5rem; font-weight: bold;"  onclick="window.location.href='/student/chapters?buyBy=Wallet'">شراء برصيد</button>
+
+                  </div>
                 </div>
           
-                <div class="row courses" id="Videos">
+                <div class="row courses mt-0" id="Videos">
                     <% if (chapters) { %>
                      <% chapters.forEach(chapter => { %>
                       <div class="col-md-4">
@@ -57,11 +64,20 @@
                                 <% if (chapter.chapterAccessibility === "EnterInPay") { %> 
                                     
                                     <% if (!chapter.isPaid) { %>
-                                      <form action="/student/buyChapter/<%= chapter._id %>" method="post">
+
+                                      <% if (buyBy=="Code") { %>
+                                        <form action="/student/buyChapter/<%= chapter._id %>" method="post">
 
                                         <input type="text"  name="code" placeholder="ادخل الكود" required>
                                         <button type="submit" class="btn btn-primary" >استخدام الكود</button> 
                                       </form>
+                                      <% } else if(buyBy=="Wallet") {%>
+                                        <form action="/student/buyChapterByWallet/<%= chapter._id %>" method="post">
+                                        <button type="button" id="useWallet" class="btn btn-primary mb-2" >استخدام رصيدي</button> <br>
+                                        <button type="submit" id="confirmBuy" class="btn btn-outline-warning w-25 d-none" > شراء </button> 
+                                      </form>
+                                      <% }%>
+
                                     <% } else{ %>
                                       <a href="/student/videos/lecture/<%= chapter._id %>">  <button  class="btn btn-primary" >دخول</button></a>
 
@@ -98,18 +114,40 @@
     <script src="/assest/bootstrap.bundle.min.js"></script>
     
     <script>
+      const useWallet = document.getElementById('useWallet');
+      const confirmBuy = document.getElementById('confirmBuy');
+      useWallet.addEventListener('click', () => {
+        confirmBuy.classList.toggle('d-none');
+      });
+ 
+    </script>
+
+    <script>
       // Check if the URL contains the error parameter
 const urlParams = new URLSearchParams(window.location.search);
 const isError = urlParams.get('error');
+const errorBalance = urlParams.get('errorBalance');
 
   if (isError) {
     document.getElementById('alert').style.display = 'block';
     setTimeout(()=> {
       document.getElementById('alert').style.display = 'none';
-    }, 20000); // Set the timeout to 5000 milliseconds (5 seconds)
+            document.getElementById('alert').classList.add('hide');
+    }, 4000); // Set the timeout to 5000 milliseconds (5 seconds)
   } else {
     document.getElementById('alert').style.display = 'none';
   }
+
+  if (errorBalance) {
+    document.getElementById('alert2').style.display = 'block';
+    setTimeout(()=> {
+      document.getElementById('alert2').style.display = 'none';
+      document.getElementById('alert2').classList.add('hide');
+    }, 4000); // Set the timeout to 5000 milliseconds (5 seconds)
+  } else {
+    document.getElementById('alert2').style.display = 'none';
+  }
+
     </script>
   </body>
 </html>
