@@ -1326,7 +1326,7 @@ client.messages.create({
         res.redirect("/teacher/addQuiz")
       })
 
-œœ
+
 
     })
     .catch((err) => {
