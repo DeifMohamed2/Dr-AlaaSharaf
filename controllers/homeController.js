@@ -143,18 +143,18 @@ const public_Register_post = async (req, res) => {
   let videosInfo = [];
 
   if (Grade ==="Grade1") {
-    await User.findOne({Grade:Grade,Code:798925}).then((result)=>{
+    await User.findOne({Grade:Grade,Code:802258}).then((result)=>{
       quizesInfo = result.quizesInfo
       videosInfo = result.videosInfo
 
     })
   }else if(Grade ==="Grade2"){
-    await User.findOne({Grade:Grade,Code:616208}).then((result)=>{
+    await User.findOne({Grade:Grade,Code:867846}).then((result)=>{
       quizesInfo = result.quizesInfo
       videosInfo = result.videosInfo
     })
   }else if(Grade ==="Grade3"){
-    await User.findOne({Grade:Grade,Code:655382}).then((result)=>{
+    await User.findOne({Grade:Grade,Code:716576}).then((result)=>{
       quizesInfo = result.quizesInfo
       videosInfo = result.videosInfo
     })
