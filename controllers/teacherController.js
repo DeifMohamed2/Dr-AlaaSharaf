@@ -79,6 +79,10 @@ const addVideo_get = (req, res) => {
   res.render("teacher/addVideo", { title: "AddVideo", path: req.path, chaptersData: null });
 };
 
+const poster_get = (req, res) => {
+  res.render("teacher/poster", { title: "Poster", path: req.path });
+};
+
 const chapter_post = (req, res) => {
   const {
     chapterName, chapterGrade, chapterAccessibility, chapterPrice,ARorEN
@@ -2204,6 +2208,7 @@ const logOut = async (req, res) => {
 module.exports = {
   dash_get,
   addVideo_get,
+  poster_get,
   addQuiz_get,
   myStudent_get,
   homeWork_get,

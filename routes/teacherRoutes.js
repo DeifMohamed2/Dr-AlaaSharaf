@@ -49,6 +49,8 @@ router.get("/dash",authMiddleware, teacherController.dash_get);
 
 router.get("/addVideo",authMiddleware, teacherController.addVideo_get);
 
+router.get('/poster', authMiddleware, teacherController.poster_get);
+
 router.get("/handleVideos",authMiddleware, teacherController.handleVideos_get);
 
 router.get("/addQuiz", authMiddleware,teacherController.addQuiz_get);

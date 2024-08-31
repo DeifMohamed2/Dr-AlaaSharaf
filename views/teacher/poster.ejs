@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel = "icon" href =  "images/icon.png"  type = "image/x-icon">
+
+        <link rel="stylesheet" href="../assest/bootstrap.min.css">
+
+    <link rel="stylesheet" href="../css/Dash.css">
+    <title>AddVideo | AddVideo</title>
+    <style>
+.video-uploader {
+    width: 100%;
+    height: 100%;
+}
+canvas{
+    width: 100%;
+    height: 100%;
+}
+
+    </style>
+</head>
+
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <aside>
+                    <div class="top">
+                        <div class="logo">
+                            <img src="../images/logo.png" alt="logo">
+                        </div>
+                        <div class="close" id="close-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>
+                    </div>
+                    <div class="sidebar">
+                        <a href="dash.html">
+                            <i class="fa-solid fa-gauge"></i>
+                            <h3>لوحه تحكمي</h3>
+                        </a>
+                        <a href="addquiz.html">
+                            <span class="material-icons-sharp">
+                                quiz
+                            </span>
+                            <h3>اضافه امتحان</h3>
+                        </a>
+                        <a href="mystudents.html">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <h3>متابعة الطلاب</h3>
+                        </a>
+                        <a href="ReviewHomeWork.html">
+                            <i class="fa-solid fa-list-check"></i>
+                            <h3>مراجعة الواجب</h3>
+                        </a>
+                        <a href="AddVideo.html" class="active">
+                            <i class="fa-solid fa-photo-film"></i>
+                            <h3>اضف فيديو</h3>
+                        </a> 
+                        <a href="poster.html" class="active">
+                            <i class="fa-solid fa-photo-film"></i>
+                            <h3> poster</h3>
+                        </a> 
+                        <a href="Mycodes.html  ">
+                            <i class="fa-solid fa-table"></i>
+                            <h3> اكواد الفيدوهات</h3>
+                        </a> 
+                        <!-- <a href="AddFiles.html">
+                            <i class="fa-solid fa-file"></i>
+                            <h3>اضف ملازم</h3>
+                        </a>  -->
+                        <a href="approve.html"  >
+                            <i class="fa-solid fa-user-plus"></i>
+                            <h3>طلبات التسجيل </h3>
+                        </a> 
+                        <a href="#">
+                            <i class="fa-solid fa-gear"></i>
+                            <h3>الاعدادات</h3>
+                        </a>
+                        <button onclick="module.logOut()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <h3>تسجيل الخروج</h3>
+                        </button>
+                    </div>
+                </aside>
+            </div>
+            <!--------------------END ASIDE  ------------------>
+            <div class=" col-md-10 ">
+                <main>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h1>اضف فيديو</h1>
+
+                        </div>
+                        <div class=" col-md-6 ">
+                            <div class="left float-start ms-3" style="margin-top: 0.2rem;">
+                                <div class="top">
+                                    <button id="menu-btn">
+                                        <span class="material-icons-sharp">
+                                            menu
+                                        </span>
+                                    </button>
+                                    <div class="theme-toggler">
+                                        <span class="material-icons-sharp active">
+                                            light_mode
+                                        </span>
+                                        <span class="material-icons-sharp">
+                                            dark_mode
+                                        </span>
+                                    </div>
+                                    <div class="profile">
+                                        <div class="info">
+                                            <p>اهلا بك،<b id="userName">
+                                            </b></p>
+                                          </div>
+                                          <div class="profile-photo">
+                                              <img src="../images/profile-1.jpg" alt="profile photo">
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <!-- END OF TOP -->
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-6">
+                              <select id="Grade" class="Grade" required>
+                                  <option value="">اختر الصف الدراسي</option>
+                                  <option value="Grade1">الصف الاول الثانوي</option>
+                                  <option value="Grade2">الصف الثاني الثانوي</option>
+                                  <option value="Grade3">الصف الثالث الثانوي</option>
+                              </select>
+                              <select name="EnORAr" id="EnORAr" class="Grade" required>
+                                  <option selected value="ar">AR</option>
+                                  <option value="en">EN</option>
+                              </select>
+  
+                              <div class="product-info">
+                                  <textarea name="title" cols="60" rows="4" id="posterTitle" placeholder="Title " required></textarea>
+                              </div>
+                              <div class="selction"></div>
+  
+                    
+                          </div>
+                    
+                          <div class="col-md-6">
+                            <img id="image" src="" alt="Image" class="d-none">
+                            <div class="container">
+                              <canvas id="canvas"></canvas>
+                            </div>
+                         
+                          </div>
+                      </div>
+                  </main>
+              </div>
+          </div>
+      </div>
+      <script src="../assest/bootstrap.bundle.min.js"></script>
+      <script src="../assest/bootstrap.min.js"></script>
+  
+      <script>
+          // =================== FOR DESIGN ============= //
+          const sdieMenu = document.querySelector("aside");
+          const menuBtn = document.querySelector("#menu-btn");
+          const closeBtn = document.querySelector("#close-btn");
+          const themeToggler = document.querySelector(".theme-toggler");
+          const modalUserName = document.getElementById("ModalUserName");
+          menuBtn.addEventListener("click", () => {
+              sdieMenu.style.display = "block";
+          });
+  
+          closeBtn.addEventListener("click", () => {
+              sdieMenu.style.display = "none";
+          });
+          document.body.classList.toggle("dark-theme-variables");
+  
+          themeToggler.addEventListener("click", () => {
+              document.body.classList.toggle("dark-theme-variables");
+  
+              themeToggler.querySelector("span:nth-child(1)").classList.toggle("active");
+              themeToggler.querySelector("span:nth-child(2)").classList.toggle("active");
+          });
+          // =================== END DESIGN ============= //
+      </script>
+  
+      <script>
+          const Grade = document.getElementById("Grade");
+          const EnORAr = document.getElementById("EnORAr");
+          const posterTitle = document.getElementById("posterTitle");
+          const image = document.getElementById("image");
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          function loadImageFromURL(URLPHOTO) {
+        var url = URLPHOTO.trim();
+        if (url) {
+            img = new Image();
+            
+            img.onload = function() {
+                imgWidth = img.width; // store original image width
+                imgHeight = img.height; // store original image height
+                canvas.width = imgWidth; // set canvas width to original image width
+                canvas.height = imgHeight; // set canvas height to original image height
+                drawText(); // Draw text on image
+            };
+            img.src = url;
+        }
+    }
+    
+          function changePhoto() {
+              if (Grade.value == "Grade1") {
+                  if (EnORAr.value == "ar") {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/%D8%A7%D9%88%D9%84%D9%8A.jpg?alt=media&token=0429ac6a-44ef-4304-84bc-f6fa24167835";
+                  
+                  } else {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/1sec.jpg?alt=media&token=ca9f40e9-231c-43f2-91d7-b709e7583371";
+                  }
+              } else if (Grade.value == "Grade2") {
+                  if (EnORAr.value == "ar") {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/%D8%AA%D8%A7%D9%86%D9%8A%D9%87.jpg?alt=media&token=68027ade-e14b-4490-9e15-767c69bb3ba6";
+                  } else {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/2sec.jpg?alt=media&token=4ad4649f-e19f-472a-bc90-43ba3131e074";
+                  }
+              } else if (Grade.value == "Grade3") {
+                  if (EnORAr.value == "ar") {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/%D8%AA%D8%A7%D9%84%D8%AA%D9%87%20.jpg?alt=media&token=0840df9c-21c8-41aa-8136-a30d40956ab4";
+                  } else {
+                     
+                      image.src = "https://firebasestorage.googleapis.com/v0/b/allasharaf.appspot.com/o/3sec.jpg?alt=media&token=77b79f03-4ae4-4820-bb5d-a7456f6ed37e";
+                }
+            }
+            loadImageFromURL(image.src)
+          }
+
+        // Call changePhoto initially to set the initial photo based on Grade and Language
+        changePhoto();
+
+        // Event listeners for Grade and Language change
+        Grade.addEventListener("change", changePhoto);
+        EnORAr.addEventListener("change", changePhoto);
+
+        posterTitle.addEventListener("input", drawText);
+
+   // Function to draw text on canvas
+   function drawText() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous text
+        ctx.drawImage(img, 0, 0, imgWidth, imgHeight); // Redraw image
+        ctx.font = '90pt ' + "Arial bold"; 
+        ctx.fillStyle = 'white';
+        ctx.fontWeight = "bold"
+        
+        // Set text direction based on language
+        ctx.direction = (posterTitle.value.match(/[\u0600-\u06FF]/) || posterTitle.value.match(/[\u0750-\u077F]/)) ? 'rtl' : 'ltr';
+        
+        var lines = posterTitle.value.split('\n');
+        var y = parseFloat(650);
+        var linePadding = parseInt(60, 10) || 0; // Line padding (default to 0 if not provided)
+        for (var i = 0; i < lines.length; i++) {
+            if (EnORAr.value =="ar") {
+                ctx.fillText(lines[i], parseFloat(1580), y); 
+            }else{
+                ctx.fillText(lines[i], parseFloat(15), y); 
+
+            }
+           // Use the input text and coordinates
+            y += parseInt("90", 10) + linePadding; // Move to the next line with padding
+        }
+    }
+
+
+    </script>
+</body>
+</html>
+  
