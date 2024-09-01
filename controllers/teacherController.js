@@ -32,21 +32,6 @@ const dash_get = async (req, res) => {
 //   .catch(error => {
 //       console.error("Error deleting users:", error);
 //   });
-await User.updateMany(
-  {}, // An empty filter object {} matches all documents in the collection
-  {
-    $set: {
-      quizesInfo: [], // Set quizesInfo to an empty array
-      videosInfo: [],
-      chaptersPaid: [],
-      transactions: [],
-      videosPaid : [],
-      examsPaid : [],
-
-      // Set videosInfo to an empty array
-    },
-  }
-);
   res.render("teacher/dash", { title: "DashBoard", path: req.path });
 };
 
