@@ -216,6 +216,8 @@
                                                             value="">
                                                         <input type="text" name="imgURL" class="d-none" id="imgURL"
                                                             value="">
+                                                        <input type="text" name="PDFURL" class="d-none" id="PDFURL"
+                                                            value="">
                                                         <select name="paymentStatus" id="paymentStatus" class="Grade"
                                                             required>
                                                             <option value="">حاله الفيديو</option>
@@ -311,15 +313,25 @@
                                 <div class="video-uploder">
                                     <div class="upload">
                                         <button class="warning BTN_Upload" type="button" id="BtnVideoUpload"
-                                            onclick="uploadVideo()">رفع فيديو <i
-                                                class="fa-solid fa-upload me-2"></i></button>
+                                        onclick="uploadVideo()">رفع فيديو <i
+                                        class="fa-solid fa-upload me-2"></i></button>
                                         <input type="file" id="selbtnVideo"><br>
-
-
+                                        
+                                        
                                     </div>
                                 </div>
-
+                                
                             </div>
+                            <div class="video-uploder">
+                                 <div class="upload">
+                                     <button class="warning BTN_Upload" type="button" id="BtnPDFUpload"
+                                         onclick=" module.uploadPDF()">رفع PDF <i
+                                             class="fa-solid fa-upload me-2"></i></button>
+                                     <input type="file" id="selbtnPDF"><br>
+
+
+                                 </div>
+                             </div>
 
 
                             <!-- <div class="col-6">
@@ -658,9 +670,12 @@ Dropzone.options.myDropzone = {
             let files = [];
             let reader = new FileReader();
             let imgUrl;
-            var input = document.getElementById("selbtnPhoto");
-            let selVideo = document.getElementById('selbtnVideo')
-            var UpBtn = document.getElementById("BtnPhotoUpload");
+            let input = document.getElementById("selbtnPhoto");
+            let UpBtn = document.getElementById("BtnPhotoUpload");
+
+            let PDFUrl;
+            let inputPDF = document.getElementById("selbtnPDF");
+            let UpBtnPDF = document.getElementById("BtnPDFUpload");
 
 
             input.onchange = (e) => {
@@ -723,6 +738,62 @@ Dropzone.options.myDropzone = {
             })
 
    
+            let filesPDF = [];
+            let readerPDF = new FileReader();
+
+            inputPDF.onchange = (e) => {
+                filesPDF = e.target.files;
+                readerPDF.readAsDataURL(filesPDF[0]);
+            };
+
+            readerPDF.onload = function () {
+                // SelBtn.remove();
+                // editPhotoBtn.style.display = "inline";
+                // document.getElementById("imgUploaded").classList.remove("d-none");
+                // document.getElementById("imgUploaded").src = reader.result;
+
+            };
+
+
+            UpBtnPDF.onclick = () => {
+                uploadPDF();
+            }
+
+
+            async function uploadPDF() {
+                var PDFToUpload = filesPDF[0];
+
+                const metaData = {
+                    contentType: PDFToUpload.type,
+                };
+
+                const storage = getStorage(storageApp);
+                console.log(PDFToUpload);
+                const stroageRef = sRef(
+                    storage,
+                    "BioDiva/" + "PDFs/" + filesPDF[0].name
+                );
+                const UploadTask = uploadBytesResumable(stroageRef, PDFToUpload, metaData);
+                UploadTask.on(
+                    "state-changed",
+                    (snapshot) => {
+                        var progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        UpBtnPDF.innerHTML = progess.toFixed(2) + "%";
+                    },
+                    (error) => {
+                        console.log(error)
+
+                    },
+                    () => {
+                        getDownloadURL(UploadTask.snapshot.ref).then((downloadURL) => {
+                            PDFUrl = downloadURL;
+                            document.getElementById('PDFURL').setAttribute('value', PDFUrl)
+                            document.getElementById('BtnPDFUpload').innerHTML = "تم الرفع"
+
+                        });
+                    }
+                );
+            }
 
         
 </script>

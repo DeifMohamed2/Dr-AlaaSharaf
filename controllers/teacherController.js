@@ -134,6 +134,7 @@ const addVideo_post = async (req, res) => {
       videoPrice,
       imgURL,
       videoURL,
+      PDFURL
 
     } = req.body;
 
@@ -142,7 +143,7 @@ const addVideo_post = async (req, res) => {
       throw new Error('Missing required fields');
     }
 
-    if(imgURL=="" || videoURL==""){
+    if(imgURL=="" || videoURL=="" , PDFURL==""){
       throw new Error('Missing required fields');
     }
     // Generate unique ID for video object
@@ -160,7 +161,8 @@ const addVideo_post = async (req, res) => {
       videoAllowedAttemps: +videoAllowedAttemps || 0,
       videoPrice: videoPrice || 0,
       videoURL: videoURL || "",
-      imgURL: imgURL || ""
+      imgURL: imgURL || "",
+      PDFURL: PDFURL || "",
     };
 
     const videosInfo = {}
