@@ -483,6 +483,8 @@ const updateVideoData = async (req, res) => {
     videoAllowedAttemps,
     AccessibleAfterViewing,
     videoPrice,
+    imgURL,
+      PDFURL,
   } = req.body;
 
   try {
@@ -501,6 +503,8 @@ const updateVideoData = async (req, res) => {
           [`${videoType}.$.videoAllowedAttemps`]: +videoAllowedAttemps || 0,
           [`${videoType}.$.AccessibleAfterViewing`]: AccessibleAfterViewing || "",
           [`${videoType}.$.videoPrice`]: videoPrice || 0,
+          [`${videoType}.$.imgURL`]: imgURL || "",
+          [`${videoType}.$.PDFURL`]: PDFURL || "",
         }
       },
       {
