@@ -55,9 +55,9 @@ const buyChapter = async (req, res) => {
   try {
     const cahpterId = req.params.cahpterId;
     const code = req.body.code;
-    const chapterData = await Chapter.findById(cahpterId,{chapterName:1}).then((result)=>{})
-   const CodeData =  await Code.findOneAndUpdate({ "Code": code , "isUsed": false , "codeType":"Chapter", "codeFor": cahpterId   }, 
-   { "isUsed": true, "usedBy": req.userData.Code, "usedIn":chapterData.chapterName }, { new: true });
+    const chapterData = await Chapter.findById(cahpterId,{chapterName:1})
+    const CodeData =  await Code.findOneAndUpdate({ "Code": code , "isUsed": false , "codeType":"General"  }, 
+   { "isUsed": true, "usedBy": req.userData.Code }, { new: true });
    if (CodeData) {
     await User.findByIdAndUpdate(req.userData._id, { $push: { chaptersPaid: cahpterId } });
     res.redirect('/student/videos/lecture/'+cahpterId);
