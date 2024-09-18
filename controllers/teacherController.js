@@ -441,7 +441,6 @@ const getSingleVideoAllData = async (req, res) => {
           videoData['totalWatches'] = result.length;
           videoData['VideoID'] = VideoID;
           videoData['usersWatchedData'] = result;
-
           const count = await User.countDocuments({});
           const nextPage = parseInt(page) + 1;
           const hasNextPage = nextPage <= Math.ceil(count / perPage);
