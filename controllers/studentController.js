@@ -432,43 +432,45 @@ const buyVideoByWallet = async (req, res) => {
 // ==================  Watch  ====================== //
 async function updateWatchInUser (req,res,videoId,chapterID){
 
-  const videoInfo = req.userData.videosInfo.find(video => video._id.toString() === videoId.toString());
- console.log(videoInfo);
- const c = 1; 
 
-//  if (videoInfo.videoAllowedAttemps <= 0) {
-//   return res.redirect('/student/videos/lecture/'+chapterID);
+  console.log("new")
+//   const videoInfo = req.userData.videosInfo.find(video => video._id.toString() === videoId.toString());
+//  console.log(videoInfo);
+//  const c = 1; 
+
+// //  if (videoInfo.videoAllowedAttemps <= 0) {
+// //   return res.redirect('/student/videos/lecture/'+chapterID);
   
-//  }
- if (!videoInfo.fristWatch) {
-  await User.findOneAndUpdate(
-    { _id: req.userData._id, 'videosInfo._id': videoId },
-    {
-      $set: { 
-        'videosInfo.$.fristWatch': Date.now(),
-        'videosInfo.$.lastWatch': Date.now()
-      },
-      $inc: { // Decrementing the values of videoAllowedAttemps and numberOfWatches
-        // 'videosInfo.$.videoAllowedAttemps': -c,
-        'videosInfo.$.numberOfWatches': +c
-      }
-    }
-  );
- }else{
-  await User.findOneAndUpdate(
-    { _id: req.userData._id, 'videosInfo._id': videoId },
-    {
-      $set: { 
+// //  }
+//  if (!videoInfo.fristWatch) {
+//   await User.findOneAndUpdate(
+//     { _id: req.userData._id, 'videosInfo._id': videoId },
+//     {
+//       $set: { 
+//         'videosInfo.$.fristWatch': Date.now(),
+//         'videosInfo.$.lastWatch': Date.now()
+//       },
+//       $inc: { // Decrementing the values of videoAllowedAttemps and numberOfWatches
+//         // 'videosInfo.$.videoAllowedAttemps': -c,
+//         'videosInfo.$.numberOfWatches': +c
+//       }
+//     }
+//   );
+//  }else{
+//   await User.findOneAndUpdate(
+//     { _id: req.userData._id, 'videosInfo._id': videoId },
+//     {
+//       $set: { 
     
-        'videosInfo.$.lastWatch': Date.now()
-      },
-      $inc: { // Decrementing the values of videoAllowedAttemps and numberOfWatches
-        // 'videosInfo.$.videoAllowedAttemps': -c,
-        'videosInfo.$.numberOfWatches': +c
-      }
-    }
-  );
- }
+//         'videosInfo.$.lastWatch': Date.now()
+//       },
+//       $inc: { // Decrementing the values of videoAllowedAttemps and numberOfWatches
+//         // 'videosInfo.$.videoAllowedAttemps': -c,
+//         'videosInfo.$.numberOfWatches': +c
+//       }
+//     }
+//   );
+//  }
 
 
 }
