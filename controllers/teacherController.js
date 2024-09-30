@@ -483,7 +483,8 @@ const updateVideoData = async (req, res) => {
     AccessibleAfterViewing,
     videoPrice,
     imgURL,
-      PDFURL,
+    PDFURL,
+    videoURL,
   } = req.body;
 
   try {
@@ -504,6 +505,7 @@ const updateVideoData = async (req, res) => {
           [`${videoType}.$.videoPrice`]: videoPrice || 0,
           [`${videoType}.$.imgURL`]: imgURL || "",
           [`${videoType}.$.PDFURL`]: PDFURL || "",
+          [`${videoType}.$.videoURL`]: videoURL || "",
         }
       },
       {
@@ -522,7 +524,7 @@ const updateVideoData = async (req, res) => {
           'videosInfo.$[elem].isVideoPrepaid': paymentStatus === "Pay" ? true : false,
           'videosInfo.$[elem].prerequisites': prerequisites,
           'videosInfo.$[elem].isUploadedHWApproved': prerequisites !== "WithHw" && prerequisites !== "WithExamaAndHw" ? true : false,
-          'videosInfo.$[elem].videoAllowedAttemps': +videoAllowedAttemps,
+          'videosInfo.$[elem].videoAllowedAttemps': +videoAllowedAttemps || 0,
           'videosInfo.$[elem].isUserUploadPerviousHWAndApproved': prerequisites !== "WithHw" && prerequisites !== "WithExamaAndHw" ? true : false,
           'videosInfo.$[elem].isHWIsUploaded': false,
           'videosInfo.$[elem].accessibleAfterViewing': AccessibleAfterViewing,
