@@ -732,15 +732,10 @@ Dropzone.options.myDropzone = {
                             document.getElementById('imgURL').setAttribute('value', imgUrl)
                             document.getElementById('BtnPhotoUpload').innerHTML = "تم الرفع"
 
-                            document.getElementById('BtnVideoUpload').removeAttribute('disabled')
                         });
                     }
                 );
             }
-
-            document.getElementById('BtnVideoUpload').addEventListener('click',()=>{
-                document.getElementById('BtnVideoUpload').innerHTML = "يتم التجهيز للرفع برجاء عدم اغلاق الصفحه نهائيا"
-            })
 
    
             let filesPDF = [];
