@@ -487,31 +487,59 @@ const updateVideoData = async (req, res) => {
     videoURL,
   } = req.body;
 
-  try {
 
-    const result = await Chapter.findOneAndUpdate(
-      {
-        _id: ChapterId,
-        [`${videoType}._id`]: VideoID
+
+  try {
+    if(videoURL==""){
+  const result = await Chapter.findOneAndUpdate(
+    {
+      _id: ChapterId,
+      [`${videoType}._id`]: VideoID,
+    },
+    {
+      $set: {
+        [`${videoType}.$.videoTitle`]: videoTitle || '',
+        [`${videoType}.$.paymentStatus`]: paymentStatus || '',
+        [`${videoType}.$.prerequisites`]: prerequisites || '',
+        [`${videoType}.$.permissionToShow`]: permissionToShow || '',
+        [`${videoType}.$.videoAllowedAttemps`]: +videoAllowedAttemps || 0,
+        [`${videoType}.$.AccessibleAfterViewing`]: AccessibleAfterViewing || '',
+        [`${videoType}.$.videoPrice`]: videoPrice || 0,
+        [`${videoType}.$.imgURL`]: imgURL || '',
+        [`${videoType}.$.PDFURL`]: PDFURL || '',
+     
       },
-      {
-        $set: {
-          [`${videoType}.$.videoTitle`]: videoTitle || "",
-          [`${videoType}.$.paymentStatus`]: paymentStatus || "",
-          [`${videoType}.$.prerequisites`]: prerequisites || "",
-          [`${videoType}.$.permissionToShow`]: permissionToShow || "",
-          [`${videoType}.$.videoAllowedAttemps`]: +videoAllowedAttemps || 0,
-          [`${videoType}.$.AccessibleAfterViewing`]: AccessibleAfterViewing || "",
-          [`${videoType}.$.videoPrice`]: videoPrice || 0,
-          [`${videoType}.$.imgURL`]: imgURL || "",
-          [`${videoType}.$.PDFURL`]: PDFURL || "",
-          [`${videoType}.$.videoURL`]: videoURL || "",
+    },
+    {
+      new: true,
+    }
+  );
+    }else{
+      const result = await Chapter.findOneAndUpdate(
+        {
+          _id: ChapterId,
+          [`${videoType}._id`]: VideoID,
+        },
+        {
+          $set: {
+            [`${videoType}.$.videoTitle`]: videoTitle || '',
+            [`${videoType}.$.paymentStatus`]: paymentStatus || '',
+            [`${videoType}.$.prerequisites`]: prerequisites || '',
+            [`${videoType}.$.permissionToShow`]: permissionToShow || '',
+            [`${videoType}.$.videoAllowedAttemps`]: +videoAllowedAttemps || 0,
+            [`${videoType}.$.AccessibleAfterViewing`]: AccessibleAfterViewing || '',
+            [`${videoType}.$.videoPrice`]: videoPrice || 0,
+            [`${videoType}.$.imgURL`]: imgURL || '',
+            [`${videoType}.$.PDFURL`]: PDFURL || '',
+            [`${videoType}.$.videoURL`]: videoURL || '',
+          },
+        },
+        {
+          new: true,
         }
-      },
-      {
-        new: true
-      }
-    );
+      );
+    }
+  
 
 
 
